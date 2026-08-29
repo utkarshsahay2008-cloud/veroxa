@@ -1,0 +1,146 @@
+[
+  {
+    "ruleId": "80C",
+    "name": "Section 80C — Investments & Expenses",
+    "version": "1.0",
+    "applicableRegime": "Old Tax Regime",
+    "category": "Investments",
+    "maximumAllowed": 150000,
+    "requiredInputFields": ["ppf", "lifeInsurance", "elss", "epf", "tuitionFees", "homeLoanPrincipal"],
+    "description": "Deduction for investments in PPF, ELSS, EPF, Life Insurance Premium, Home Loan Principal, etc.",
+    "source": "Income Tax Act 1961 - Section 80C",
+    "effectiveYear": "FY 2024-25",
+    "conditions": [
+      {
+        "field": "total80CEligible",
+        "operator": ">",
+        "value": 0,
+        "description": "User has reported at least one eligible Section 80C investment or expense."
+      }
+    ],
+    "explanationTemplate": "Under Section 80C, you reported a total of ₹{inputValue} in eligible investments. The maximum allowed deduction under the Old Tax Regime is ₹{maximumAllowed}. Your allowed deduction is ₹{potentialDeduction}."
+  },
+  {
+    "ruleId": "80D",
+    "name": "Section 80D — Medical Insurance Premium",
+    "version": "1.0",
+    "applicableRegime": "Old Tax Regime",
+    "category": "Health",
+    "maximumAllowed": 75000,
+    "subLimits": {
+      "selfFamilyNonSenior": 25000,
+      "selfFamilySenior": 50000,
+      "parentsNonSenior": 25000,
+      "parentsSenior": 50000
+    },
+    "requiredInputFields": ["healthInsuranceSelf", "healthInsuranceParents", "age", "parentsAge"],
+    "description": "Deduction for medical insurance premium paid for self, family, and parents.",
+    "source": "Income Tax Act 1961 - Section 80D",
+    "effectiveYear": "FY 2024-25",
+    "conditions": [
+      {
+        "field": "healthInsuranceTotal",
+        "operator": ">",
+        "value": 0,
+        "description": "User has reported health insurance premium payments for self, family, or parents."
+      }
+    ],
+    "explanationTemplate": "Under Section 80D, health insurance premiums qualify up to ₹25,000 for self/family (₹50,000 if senior citizen) plus up to ₹25,000/₹50,000 for parents. You reported ₹{inputValue}, resulting in a deduction of ₹{potentialDeduction}."
+  },
+  {
+    "ruleId": "80CCD_1B",
+    "name": "Section 80CCD(1B) — National Pension System (NPS)",
+    "version": "1.0",
+    "applicableRegime": "Old Tax Regime",
+    "category": "Retirement",
+    "maximumAllowed": 50000,
+    "requiredInputFields": ["nps"],
+    "description": "Additional deduction up to ₹50,000 for voluntary contributions to NPS Tier-I account (over and above 80C).",
+    "source": "Income Tax Act 1961 - Section 80CCD(1B)",
+    "effectiveYear": "FY 2024-25",
+    "conditions": [
+      {
+        "field": "nps",
+        "operator": ">",
+        "value": 0,
+        "description": "User has contributed to National Pension System (NPS Tier-I)."
+      }
+    ],
+    "explanationTemplate": "Section 80CCD(1B) grants an additional tax deduction up to ₹50,000 exclusively for NPS investments. You invested ₹{inputValue}, allowing a deduction of ₹{potentialDeduction}."
+  },
+  {
+    "ruleId": "SECTION_24B",
+    "name": "Section 24(b) — Home Loan Interest",
+    "version": "1.0",
+    "applicableRegime": "Old Tax Regime",
+    "category": "Housing",
+    "maximumAllowed": 200000,
+    "requiredInputFields": ["homeLoanInterest", "propertyType"],
+    "description": "Deduction for interest paid on home loan for self-occupied house property.",
+    "source": "Income Tax Act 1961 - Section 24(b)",
+    "effectiveYear": "FY 2024-25",
+    "conditions": [
+      {
+        "field": "homeLoanInterest",
+        "operator": ">",
+        "value": 0,
+        "description": "User paid interest on home loan for a residential property."
+      }
+    ],
+    "explanationTemplate": "Interest paid on home loan for self-occupied property is deductible up to ₹2,00,000 under Section 24(b). You paid ₹{inputValue}, giving a deduction of ₹{potentialDeduction}."
+  },
+  {
+    "ruleId": "80GG",
+    "name": "Section 80GG — House Rent Paid (No HRA received)",
+    "version": "1.0",
+    "applicableRegime": "Old Tax Regime",
+    "category": "Housing",
+    "maximumAllowed": 60000,
+    "requiredInputFields": ["rent", "hraReceived", "annualIncome"],
+    "description": "Deduction for rent paid by individuals who do not receive House Rent Allowance (HRA) from employer.",
+    "source": "Income Tax Act 1961 - Section 80GG",
+    "effectiveYear": "FY 2024-25",
+    "conditions": [
+      {
+        "field": "rent",
+        "operator": ">",
+        "value": 0,
+        "description": "User pays rent for accommodation."
+      },
+      {
+        "field": "hraReceived",
+        "operator": "==",
+        "value": 0,
+        "description": "User does NOT receive HRA from employer."
+      }
+    ],
+    "explanationTemplate": "Under Section 80GG, rent paid (minus 10% income) capped at ₹5,000/month (₹60,000/yr) or 25% total income is deductible when HRA is not provided. Calculated deduction: ₹{potentialDeduction}."
+  },
+  {
+    "ruleId": "80TTA",
+    "name": "Section 80TTA — Interest on Savings Account",
+    "version": "1.0",
+    "applicableRegime": "Old Tax Regime",
+    "category": "Banking",
+    "maximumAllowed": 10000,
+    "requiredInputFields": ["savingsInterest", "age"],
+    "description": "Deduction up to ₹10,000 on savings account interest for non-senior citizens.",
+    "source": "Income Tax Act 1961 - Section 80TTA",
+    "effectiveYear": "FY 2024-25",
+    "conditions": [
+      {
+        "field": "savingsInterest",
+        "operator": ">",
+        "value": 0,
+        "description": "User has earned interest income from savings bank accounts."
+      },
+      {
+        "field": "age",
+        "operator": "<",
+        "value": 60,
+        "description": "User age is under 60 years."
+      }
+    ],
+    "explanationTemplate": "Section 80TTA allows deduction up to ₹10,000 for savings bank interest for individuals under 60. You reported ₹{inputValue}, yielding ₹{potentialDeduction} deduction."
+  }
+]

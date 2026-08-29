@@ -1,0 +1,140 @@
+[
+  {
+    "schemeId": "PPF",
+    "schemeName": "Public Provident Fund (PPF)",
+    "category": "Long-term Savings & Tax Exemption",
+    "shortDescription": "Government-backed 15-year tax-free savings scheme offering EEE status.",
+    "longDescription": "PPF is one of India's safest investment options with Guaranteed interest (7.1% p.a.), exempt-exempt-exempt (EEE) tax benefit under Section 80C.",
+    "effectiveYear": "FY 2024-25",
+    "officialSource": "Ministry of Finance / India Post",
+    "benefit": "Tax deduction under Sec 80C up to ₹1,50,000 + 100% Tax-Free Interest & Maturity.",
+    "conditions": [
+      {
+        "field": "residency",
+        "operator": "==",
+        "value": "Indian Resident",
+        "description": "Must be an Indian Resident Individual."
+      },
+      {
+        "field": "age",
+        "operator": ">=",
+        "value": 18,
+        "description": "Adult individual (or parent on behalf of minor)."
+      }
+    ]
+  },
+  {
+    "schemeId": "NPS",
+    "schemeName": "National Pension System (NPS)",
+    "category": "Retirement & Pension",
+    "shortDescription": "Government-sponsored pension scheme offering additional ₹50,000 tax deduction under 80CCD(1B).",
+    "longDescription": "NPS offers market-linked returns across equity and debt, with dedicated pension wealth accumulation and an exclusive deduction over and above Section 80C.",
+    "effectiveYear": "FY 2024-25",
+    "officialSource": "PFRDA / National Pension System Trust",
+    "benefit": "Exclusive ₹50,000 tax deduction under 80CCD(1B) + 80CCD(1) benefit up to 10% of salary.",
+    "conditions": [
+      {
+        "field": "age",
+        "operator": ">=",
+        "value": 18,
+        "description": "Citizen of India aged between 18 and 70 years."
+      },
+      {
+        "field": "age",
+        "operator": "<=",
+        "value": 70,
+        "description": "Age does not exceed 70 years."
+      }
+    ]
+  },
+  {
+    "schemeId": "SSY",
+    "schemeName": "Sukanya Samriddhi Yojana (SSY)",
+    "category": "Girl Child Savings",
+    "shortDescription": "High-interest tax-free deposit scheme for parents of a girl child below 10 years.",
+    "longDescription": "SSY provides an attractive interest rate (8.2% p.a.) for securing the higher education and marriage expenses of a girl child, with Section 80C tax deduction.",
+    "effectiveYear": "FY 2024-25",
+    "officialSource": "Ministry of Finance / Beti Bachao Beti Padhao",
+    "benefit": "Section 80C deduction up to ₹1.5L + High Guaranteed Tax-Free Returns (8.2% p.a.).",
+    "conditions": [
+      {
+        "field": "hasGirlChild",
+        "operator": "==",
+        "value": true,
+        "description": "Parent or legal guardian of a girl child."
+      },
+      {
+        "field": "girlChildAge",
+        "operator": "<=",
+        "value": 10,
+        "description": "Girl child age is 10 years or younger at account opening."
+      }
+    ]
+  },
+  {
+    "schemeId": "SCSS",
+    "schemeName": "Senior Citizens Savings Scheme (SCSS)",
+    "category": "Senior Citizen Welfare",
+    "shortDescription": "High-yield quarterly income scheme for individuals aged 60 and above.",
+    "longDescription": "SCSS offers senior citizens a secure 8.2% p.a. quarterly interest income, with principal tax exemption under Section 80C up to ₹1.5 Lakhs.",
+    "effectiveYear": "FY 2024-25",
+    "officialSource": "Department of Economic Affairs / India Post",
+    "benefit": "Guaranteed 8.2% p.a. quarterly payouts + Section 80C deduction up to ₹1.5 Lakhs.",
+    "conditions": [
+      {
+        "field": "age",
+        "operator": ">=",
+        "value": 60,
+        "description": "Must be a senior citizen aged 60 years or above (or 55+ for retired defense/VRS employees)."
+      }
+    ]
+  },
+  {
+    "schemeId": "MSSC",
+    "schemeName": "Mahila Samman Savings Certificate (MSSC)",
+    "category": "Women Empowerment",
+    "shortDescription": "2-year small savings scheme for women and girls offering 7.5% fixed interest.",
+    "longDescription": "A government-backed 2-year deposit facility offering a fixed interest rate of 7.5% per annum compounded quarterly for female investors.",
+    "effectiveYear": "FY 2024-25",
+    "officialSource": "Ministry of Finance",
+    "benefit": "Fixed guaranteed 7.5% p.a. returns over 2 years with partial withdrawal flexibility.",
+    "conditions": [
+      {
+        "field": "gender",
+        "operator": "==",
+        "value": "Female",
+        "description": "Account holder must be a woman or a girl child (by guardian)."
+      }
+    ]
+  },
+  {
+    "schemeId": "APY",
+    "schemeName": "Atal Pension Yojana (APY)",
+    "category": "Unorganized Sector Pension",
+    "shortDescription": "Guaranteed monthly pension scheme (₹1,000 to ₹5,000/month) for citizens in unorganized sectors.",
+    "longDescription": "Government guaranteed pension scheme for unorganized sector workers aged 18 to 40 offering lifelong monthly pension after age 60.",
+    "effectiveYear": "FY 2024-25",
+    "officialSource": "PFRDA",
+    "benefit": "Government guaranteed monthly pension of up to ₹5,000/month after 60 + Tax benefits under 80CCD.",
+    "conditions": [
+      {
+        "field": "age",
+        "operator": ">=",
+        "value": 18,
+        "description": "Age between 18 and 40 years."
+      },
+      {
+        "field": "age",
+        "operator": "<=",
+        "value": 40,
+        "description": "Age does not exceed 40 years."
+      },
+      {
+        "field": "isTaxPayer",
+        "operator": "==",
+        "value": false,
+        "description": "Subscriber is not an income tax payer (eligible for non-income tax paying individuals)."
+      }
+    ]
+  }
+]
