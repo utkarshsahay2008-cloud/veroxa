@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { UserProfile, SyntheticPersona } from '../types';
 import { parseDocument } from '../services/api';
-import { Play, Upload } from 'lucide-react';
+import { Play, Upload, User, Home, Shield, DollarSign, BookOpen } from 'lucide-react';
 
 interface ProfilePageProps {
   personas: SyntheticPersona[];
@@ -12,7 +12,7 @@ interface ProfilePageProps {
 export const ProfilePage: React.FC<ProfilePageProps> = ({ personas, onAnalyze, activeProfile }) => {
   const [profile, setProfile] = useState<UserProfile>(activeProfile);
   const [sampleText, setSampleText] = useState('');
-  const [activeTab, setActiveTab] = useState<'personas' | 'form' | 'upload'>('personas');
+  const [activeTab, setActiveTab] = useState<'personas' | 'form' | 'upload'>('form');
   const [parsing, setParsing] = useState(false);
 
   const handleChange = (field: keyof UserProfile, value: any) => {
@@ -28,7 +28,7 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({ personas, onAnalyze, a
     if (!sampleText.trim()) return;
     setParsing(true);
     try {
-      const { parsedProfile, analysis } = await parseDocument(sampleText);
+      const { parsedProfile } = await parseDocument(sampleText);
       setProfile(parsedProfile);
       onAnalyze(parsedProfile);
     } catch (err) {
@@ -51,9 +51,11 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({ personas, onAnalyze, a
       healthInsuranceSelf: 25000,
       healthInsuranceParents: 25000,
       parentsAge: 62,
+      preventiveHealthCheckup: 5000,
       nps: 50000,
       homeLoanInterest: 150000,
-      evLoanInterest: 45000
+      evLoanInterest: 45000,
+      educationLoanInterest: 30000
     },
     null,
     2
@@ -62,42 +64,42 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({ personas, onAnalyze, a
   return (
     <div className="max-w-4xl mx-auto space-y-6 py-8 px-4">
       {/* Header */}
-      <div className="bg-white rounded-xl border border-slate-200 p-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+      <div className="bg-slate-900 text-white rounded-xl p-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border border-slate-800">
         <div>
-          <span className="text-[11px] font-semibold uppercase tracking-wider text-slate-500 bg-slate-100 px-2.5 py-0.5 rounded">
+          <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 bg-slate-800 border border-slate-700 px-2.5 py-0.5 rounded">
             SYNTHETIC DEMO DATA ONLY
           </span>
-          <h2 className="text-xl font-bold text-slate-900 mt-1">Your Household Tax Profile</h2>
-          <p className="text-xs text-slate-500">Provide household details to evaluate against configured tax rules</p>
+          <h2 className="text-xl font-bold text-white mt-1">Tell us about your household</h2>
+          <p className="text-xs text-slate-300">Detailed financial context used to evaluate supported tax rules</p>
         </div>
 
         <button
           onClick={() => onAnalyze(profile)}
-          className="bg-slate-900 hover:bg-slate-800 text-white font-semibold text-xs px-5 py-2.5 rounded-lg transition-colors flex items-center gap-2"
+          className="bg-white hover:bg-slate-100 text-slate-900 font-semibold text-xs px-5 py-2.5 rounded-lg transition-colors flex items-center gap-2"
         >
-          <Play className="w-3.5 h-3.5 fill-white" />
+          <Play className="w-3.5 h-3.5 fill-slate-900" />
           Run Tax Checkup
         </button>
       </div>
 
-      {/* Tabs */}
+      {/* Navigation Tabs */}
       <div className="flex border-b border-slate-200 gap-6">
-        <button
-          onClick={() => setActiveTab('personas')}
-          className={`pb-3 text-xs sm:text-sm font-semibold transition-colors border-b-2 ${
-            activeTab === 'personas' ? 'border-slate-900 text-slate-900' : 'border-transparent text-slate-500 hover:text-slate-900'
-          }`}
-        >
-          1. Synthetic Household Personas
-        </button>
-
         <button
           onClick={() => setActiveTab('form')}
           className={`pb-3 text-xs sm:text-sm font-semibold transition-colors border-b-2 ${
             activeTab === 'form' ? 'border-slate-900 text-slate-900' : 'border-transparent text-slate-500 hover:text-slate-900'
           }`}
         >
-          2. Edit Income & Expenses
+          Edit Income & Household Details
+        </button>
+
+        <button
+          onClick={() => setActiveTab('personas')}
+          className={`pb-3 text-xs sm:text-sm font-semibold transition-colors border-b-2 ${
+            activeTab === 'personas' ? 'border-slate-900 text-slate-900' : 'border-transparent text-slate-500 hover:text-slate-900'
+          }`}
+        >
+          Select Synthetic Demo Persona
         </button>
 
         <button
@@ -106,9 +108,332 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({ personas, onAnalyze, a
             activeTab === 'upload' ? 'border-slate-900 text-slate-900' : 'border-transparent text-slate-500 hover:text-slate-900'
           }`}
         >
-          3. Parse Sample Document
+          Parse Document
         </button>
       </div>
+
+      {/* Form Tab */}
+      {activeTab === 'form' && (
+        <div className="bg-white rounded-xl border border-slate-200 p-6 space-y-8">
+          {/* 1. Personal & Income Section */}
+          <div className="space-y-4">
+            <h3 className="text-sm font-bold text-slate-900 uppercase tracking-wider flex items-center gap-2 border-b border-slate-100 pb-2">
+              <User className="w-4 h-4 text-slate-700" />
+              1. Personal & Income Context
+            </h3>
+
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <div>
+                <label className="block text-xs font-medium text-slate-700 mb-1">Full Name</label>
+                <input
+                  type="text"
+                  value={profile.name || ''}
+                  onChange={(e) => handleChange('name', e.target.value)}
+                  className="w-full bg-slate-50 border border-slate-200 rounded-md px-3 py-2 text-xs text-slate-900"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-medium text-slate-700 mb-1">Age (Years)</label>
+                <input
+                  type="number"
+                  value={profile.age}
+                  onChange={(e) => handleChange('age', parseInt(e.target.value) || 0)}
+                  className="w-full bg-slate-50 border border-slate-200 rounded-md px-3 py-2 text-xs text-slate-900"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-medium text-slate-700 mb-1">Employment Type</label>
+                <select
+                  value={profile.occupation}
+                  onChange={(e) => handleChange('occupation', e.target.value)}
+                  className="w-full bg-slate-50 border border-slate-200 rounded-md px-3 py-2 text-xs text-slate-900"
+                >
+                  <option value="salaried">Salaried Employee</option>
+                  <option value="self-employed">Self-Employed / Business</option>
+                  <option value="freelancer">Freelancer / Consultant</option>
+                  <option value="retired">Retired Pensioner</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-xs font-medium text-slate-700 mb-1">Gross Annual Income (₹)</label>
+                <input
+                  type="number"
+                  value={profile.annualIncome}
+                  onChange={(e) => handleChange('annualIncome', parseFloat(e.target.value) || 0)}
+                  className="w-full bg-slate-50 border border-slate-200 rounded-md px-3 py-2 text-xs font-bold text-slate-900"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-medium text-slate-700 mb-1">Savings Bank Interest (80TTA) (₹)</label>
+                <input
+                  type="number"
+                  value={profile.savingsInterest || 0}
+                  onChange={(e) => handleChange('savingsInterest', parseFloat(e.target.value) || 0)}
+                  className="w-full bg-slate-50 border border-slate-200 rounded-md px-3 py-2 text-xs text-slate-900"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-medium text-slate-700 mb-1">FD / Other Interest Income (₹)</label>
+                <input
+                  type="number"
+                  value={profile.fdInterest || 0}
+                  onChange={(e) => handleChange('fdInterest', parseFloat(e.target.value) || 0)}
+                  className="w-full bg-slate-50 border border-slate-200 rounded-md px-3 py-2 text-xs text-slate-900"
+                />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-2">
+              <div>
+                <label className="block text-xs font-medium text-slate-700 mb-1">Marital Status</label>
+                <select
+                  value={profile.maritalStatus || 'Married'}
+                  onChange={(e) => handleChange('maritalStatus', e.target.value)}
+                  className="w-full bg-slate-50 border border-slate-200 rounded-md px-3 py-2 text-xs text-slate-900"
+                >
+                  <option value="Married">Married</option>
+                  <option value="Single">Single</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-xs font-medium text-slate-700 mb-1">Number of Children</label>
+                <input
+                  type="number"
+                  value={profile.numberOfChildren || 0}
+                  onChange={(e) => handleChange('numberOfChildren', parseInt(e.target.value) || 0)}
+                  className="w-full bg-slate-50 border border-slate-200 rounded-md px-3 py-2 text-xs text-slate-900"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-medium text-slate-700 mb-1">Supporting Senior Parents?</label>
+                <select
+                  value={profile.supportingParents ? 'yes' : 'no'}
+                  onChange={(e) => handleChange('supportingParents', e.target.value === 'yes')}
+                  className="w-full bg-slate-50 border border-slate-200 rounded-md px-3 py-2 text-xs text-slate-900"
+                >
+                  <option value="yes">Yes (Supporting Parents)</option>
+                  <option value="no">No</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          {/* 2. Housing & Living Expenses */}
+          <div className="space-y-4 pt-4 border-t border-slate-100">
+            <h3 className="text-sm font-bold text-slate-900 uppercase tracking-wider flex items-center gap-2 border-b border-slate-100 pb-2">
+              <Home className="w-4 h-4 text-slate-700" />
+              2. Housing & Living Expenses
+            </h3>
+
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <div>
+                <label className="block text-xs font-medium text-slate-700 mb-1">Annual Rent Paid (₹)</label>
+                <input
+                  type="number"
+                  value={profile.rent}
+                  onChange={(e) => handleChange('rent', parseFloat(e.target.value) || 0)}
+                  placeholder="Do you pay rent?"
+                  className="w-full bg-slate-50 border border-slate-200 rounded-md px-3 py-2 text-xs text-slate-900"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-medium text-slate-700 mb-1">HRA Received from Employer (₹)</label>
+                <input
+                  type="number"
+                  value={profile.hraReceived}
+                  onChange={(e) => handleChange('hraReceived', parseFloat(e.target.value) || 0)}
+                  className="w-full bg-slate-50 border border-slate-200 rounded-md px-3 py-2 text-xs text-slate-900"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-medium text-slate-700 mb-1">Home Loan Interest Paid (24b) (₹)</label>
+                <input
+                  type="number"
+                  value={profile.homeLoanInterest}
+                  onChange={(e) => handleChange('homeLoanInterest', parseFloat(e.target.value) || 0)}
+                  placeholder="Max ₹2,00,000 limit"
+                  className="w-full bg-slate-50 border border-slate-200 rounded-md px-3 py-2 text-xs text-slate-900"
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* 3. Section 80C Investments & Education */}
+          <div className="space-y-4 pt-4 border-t border-slate-100">
+            <h3 className="text-sm font-bold text-slate-900 uppercase tracking-wider flex items-center gap-2 border-b border-slate-100 pb-2">
+              <DollarSign className="w-4 h-4 text-slate-700" />
+              3. Section 80C Investments & Education (Max ₹1,50,000)
+            </h3>
+
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <div>
+                <label className="block text-xs font-medium text-slate-700 mb-1">PPF Deposit (₹)</label>
+                <input
+                  type="number"
+                  value={profile.ppf}
+                  onChange={(e) => handleChange('ppf', parseFloat(e.target.value) || 0)}
+                  className="w-full bg-slate-50 border border-slate-200 rounded-md px-3 py-2 text-xs text-slate-900"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-medium text-slate-700 mb-1">ELSS Mutual Funds (₹)</label>
+                <input
+                  type="number"
+                  value={profile.elss}
+                  onChange={(e) => handleChange('elss', parseFloat(e.target.value) || 0)}
+                  className="w-full bg-slate-50 border border-slate-200 rounded-md px-3 py-2 text-xs text-slate-900"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-medium text-slate-700 mb-1">EPF Employee Contribution (₹)</label>
+                <input
+                  type="number"
+                  value={profile.epf}
+                  onChange={(e) => handleChange('epf', parseFloat(e.target.value) || 0)}
+                  className="w-full bg-slate-50 border border-slate-200 rounded-md px-3 py-2 text-xs text-slate-900"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-medium text-slate-700 mb-1">Life Insurance Premium (₹)</label>
+                <input
+                  type="number"
+                  value={profile.lifeInsurance}
+                  onChange={(e) => handleChange('lifeInsurance', parseFloat(e.target.value) || 0)}
+                  className="w-full bg-slate-50 border border-slate-200 rounded-md px-3 py-2 text-xs text-slate-900"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-medium text-slate-700 mb-1">Children School Tuition Fees (80C) (₹)</label>
+                <input
+                  type="number"
+                  value={profile.tuitionFees}
+                  onChange={(e) => handleChange('tuitionFees', parseFloat(e.target.value) || 0)}
+                  className="w-full bg-slate-50 border border-slate-200 rounded-md px-3 py-2 text-xs text-slate-900"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-medium text-slate-700 mb-1">Home Loan Principal Repaid (80C) (₹)</label>
+                <input
+                  type="number"
+                  value={profile.homeLoanPrincipal}
+                  onChange={(e) => handleChange('homeLoanPrincipal', parseFloat(e.target.value) || 0)}
+                  className="w-full bg-slate-50 border border-slate-200 rounded-md px-3 py-2 text-xs text-slate-900"
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* 4. Health & Senior Parents (Section 80D) */}
+          <div className="space-y-4 pt-4 border-t border-slate-100">
+            <h3 className="text-sm font-bold text-slate-900 uppercase tracking-wider flex items-center gap-2 border-b border-slate-100 pb-2">
+              <Shield className="w-4 h-4 text-slate-700" />
+              4. Health & Senior Parents Insurance (Section 80D)
+            </h3>
+
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <div>
+                <label className="block text-xs font-medium text-slate-700 mb-1">Health Insurance Self/Family (₹)</label>
+                <input
+                  type="number"
+                  value={profile.healthInsuranceSelf}
+                  onChange={(e) => handleChange('healthInsuranceSelf', parseFloat(e.target.value) || 0)}
+                  placeholder="Do you pay health insurance?"
+                  className="w-full bg-slate-50 border border-slate-200 rounded-md px-3 py-2 text-xs text-slate-900"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-medium text-slate-700 mb-1">Parents Health Insurance (₹)</label>
+                <input
+                  type="number"
+                  value={profile.healthInsuranceParents}
+                  onChange={(e) => handleChange('healthInsuranceParents', parseFloat(e.target.value) || 0)}
+                  placeholder="Do you pay for parents?"
+                  className="w-full bg-slate-50 border border-slate-200 rounded-md px-3 py-2 text-xs text-slate-900"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-medium text-slate-700 mb-1">Preventive Health Checkup (₹)</label>
+                <input
+                  type="number"
+                  value={profile.preventiveHealthCheckup || 0}
+                  onChange={(e) => handleChange('preventiveHealthCheckup', parseFloat(e.target.value) || 0)}
+                  placeholder="Max ₹5,000 claim"
+                  className="w-full bg-slate-50 border border-slate-200 rounded-md px-3 py-2 text-xs text-slate-900"
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* 5. NPS, EV & Higher Education Loans */}
+          <div className="space-y-4 pt-4 border-t border-slate-100">
+            <h3 className="text-sm font-bold text-slate-900 uppercase tracking-wider flex items-center gap-2 border-b border-slate-100 pb-2">
+              <BookOpen className="w-4 h-4 text-slate-700" />
+              5. NPS Retirement & Dedicated Loans
+            </h3>
+
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <div>
+                <label className="block text-xs font-medium text-slate-700 mb-1">NPS Voluntary Contribution (80CCD 1B) (₹)</label>
+                <input
+                  type="number"
+                  value={profile.nps}
+                  onChange={(e) => handleChange('nps', parseFloat(e.target.value) || 0)}
+                  placeholder="Exclusive ₹50,000 limit"
+                  className="w-full bg-slate-50 border border-slate-200 rounded-md px-3 py-2 text-xs text-slate-900 font-semibold"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-medium text-slate-700 mb-1">EV Loan Interest (80EEB) (₹)</label>
+                <input
+                  type="number"
+                  value={profile.evLoanInterest || 0}
+                  onChange={(e) => handleChange('evLoanInterest', parseFloat(e.target.value) || 0)}
+                  placeholder="Max ₹1,50,000 limit"
+                  className="w-full bg-slate-50 border border-slate-200 rounded-md px-3 py-2 text-xs text-slate-900"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-medium text-slate-700 mb-1">Education Loan Interest (80E) (₹)</label>
+                <input
+                  type="number"
+                  value={profile.educationLoanInterest || 0}
+                  onChange={(e) => handleChange('educationLoanInterest', parseFloat(e.target.value) || 0)}
+                  placeholder="100% deductible"
+                  className="w-full bg-slate-50 border border-slate-200 rounded-md px-3 py-2 text-xs text-slate-900"
+                />
+              </div>
+            </div>
+          </div>
+
+          <div className="pt-4 flex justify-end">
+            <button
+              onClick={() => onAnalyze(profile)}
+              className="bg-slate-900 hover:bg-slate-800 text-white font-semibold text-xs px-6 py-3 rounded-lg transition-colors flex items-center gap-2"
+            >
+              <Play className="w-3.5 h-3.5 fill-white" />
+              Save & Analyze Household Profile
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* Personas Tab */}
       {activeTab === 'personas' && (
@@ -126,192 +451,10 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({ personas, onAnalyze, a
               <p className="text-xs text-slate-500">{p.tagline}</p>
               <div className="pt-2 text-xs font-semibold text-slate-900 flex items-center justify-between border-t border-slate-100">
                 <span>Annual Income: ₹{p.profile.annualIncome.toLocaleString('en-IN')}</span>
-                <span className="text-slate-600 font-medium">Select & Check →</span>
+                <span className="text-slate-600 font-medium">Select Persona →</span>
               </div>
             </div>
           ))}
-        </div>
-      )}
-
-      {/* Form Tab */}
-      {activeTab === 'form' && (
-        <div className="bg-white rounded-xl border border-slate-200 p-6 space-y-6">
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div>
-              <label className="block text-xs font-medium text-slate-700 mb-1">Full Name</label>
-              <input
-                type="text"
-                value={profile.name || ''}
-                onChange={(e) => handleChange('name', e.target.value)}
-                className="w-full bg-slate-50 border border-slate-200 rounded-md px-3 py-2 text-xs text-slate-900"
-              />
-            </div>
-
-            <div>
-              <label className="block text-xs font-medium text-slate-700 mb-1">Age (Years)</label>
-              <input
-                type="number"
-                value={profile.age}
-                onChange={(e) => handleChange('age', parseInt(e.target.value) || 0)}
-                className="w-full bg-slate-50 border border-slate-200 rounded-md px-3 py-2 text-xs text-slate-900"
-              />
-            </div>
-
-            <div>
-              <label className="block text-xs font-medium text-slate-700 mb-1">Employment Type</label>
-              <select
-                value={profile.occupation}
-                onChange={(e) => handleChange('occupation', e.target.value)}
-                className="w-full bg-slate-50 border border-slate-200 rounded-md px-3 py-2 text-xs text-slate-900"
-              >
-                <option value="salaried">Salaried Employee</option>
-                <option value="self-employed">Self-Employed / Business</option>
-                <option value="freelancer">Freelancer / Consultant</option>
-                <option value="retired">Retired Pensioner</option>
-              </select>
-            </div>
-
-            <div>
-              <label className="block text-xs font-medium text-slate-700 mb-1">Gross Annual Income (₹)</label>
-              <input
-                type="number"
-                value={profile.annualIncome}
-                onChange={(e) => handleChange('annualIncome', parseFloat(e.target.value) || 0)}
-                className="w-full bg-slate-50 border border-slate-200 rounded-md px-3 py-2 text-xs font-semibold text-slate-900"
-              />
-            </div>
-          </div>
-
-          <div className="border-t border-slate-100 pt-4 space-y-3">
-            <h4 className="text-xs font-bold text-slate-900 uppercase tracking-wider">Housing & Rent</h4>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div>
-                <label className="block text-xs font-medium text-slate-700 mb-1">Annual Rent Paid (₹)</label>
-                <input
-                  type="number"
-                  value={profile.rent}
-                  onChange={(e) => handleChange('rent', parseFloat(e.target.value) || 0)}
-                  className="w-full bg-slate-50 border border-slate-200 rounded-md px-3 py-2 text-xs text-slate-900"
-                />
-              </div>
-
-              <div>
-                <label className="block text-xs font-medium text-slate-700 mb-1">HRA Received from Employer (₹)</label>
-                <input
-                  type="number"
-                  value={profile.hraReceived}
-                  onChange={(e) => handleChange('hraReceived', parseFloat(e.target.value) || 0)}
-                  className="w-full bg-slate-50 border border-slate-200 rounded-md px-3 py-2 text-xs text-slate-900"
-                />
-              </div>
-            </div>
-          </div>
-
-          <div className="border-t border-slate-100 pt-4 space-y-3">
-            <h4 className="text-xs font-bold text-slate-900 uppercase tracking-wider">Section 80C Investments (Max ₹1,50,000)</h4>
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-              <div>
-                <label className="block text-xs font-medium text-slate-700 mb-1">PPF Deposit (₹)</label>
-                <input
-                  type="number"
-                  value={profile.ppf}
-                  onChange={(e) => handleChange('ppf', parseFloat(e.target.value) || 0)}
-                  className="w-full bg-slate-50 border border-slate-200 rounded-md px-3 py-2 text-xs text-slate-900"
-                />
-              </div>
-
-              <div>
-                <label className="block text-xs font-medium text-slate-700 mb-1">Life Insurance Premium (₹)</label>
-                <input
-                  type="number"
-                  value={profile.lifeInsurance}
-                  onChange={(e) => handleChange('lifeInsurance', parseFloat(e.target.value) || 0)}
-                  className="w-full bg-slate-50 border border-slate-200 rounded-md px-3 py-2 text-xs text-slate-900"
-                />
-              </div>
-
-              <div>
-                <label className="block text-xs font-medium text-slate-700 mb-1">ELSS Mutual Funds (₹)</label>
-                <input
-                  type="number"
-                  value={profile.elss}
-                  onChange={(e) => handleChange('elss', parseFloat(e.target.value) || 0)}
-                  className="w-full bg-slate-50 border border-slate-200 rounded-md px-3 py-2 text-xs text-slate-900"
-                />
-              </div>
-            </div>
-          </div>
-
-          <div className="border-t border-slate-100 pt-4 space-y-3">
-            <h4 className="text-xs font-bold text-slate-900 uppercase tracking-wider">Loans & Vehicle Expenses</h4>
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-              <div>
-                <label className="block text-xs font-medium text-slate-700 mb-1">Home Loan Interest (24b) (₹)</label>
-                <input
-                  type="number"
-                  value={profile.homeLoanInterest}
-                  onChange={(e) => handleChange('homeLoanInterest', parseFloat(e.target.value) || 0)}
-                  className="w-full bg-slate-50 border border-slate-200 rounded-md px-3 py-2 text-xs text-slate-900"
-                />
-              </div>
-
-              <div>
-                <label className="block text-xs font-medium text-slate-700 mb-1">EV Loan Interest (80EEB) (₹)</label>
-                <input
-                  type="number"
-                  value={profile.evLoanInterest || 0}
-                  onChange={(e) => handleChange('evLoanInterest', parseFloat(e.target.value) || 0)}
-                  placeholder="e.g. 45000"
-                  className="w-full bg-slate-50 border border-slate-200 rounded-md px-3 py-2 text-xs text-slate-900 font-semibold"
-                />
-              </div>
-
-              <div>
-                <label className="block text-xs font-medium text-slate-700 mb-1">Business Vehicle Expenses (₹)</label>
-                <input
-                  type="number"
-                  value={profile.vehicleExpenses || 0}
-                  onChange={(e) => handleChange('vehicleExpenses', parseFloat(e.target.value) || 0)}
-                  placeholder="Fuel/Maintenance/Depreciation"
-                  className="w-full bg-slate-50 border border-slate-200 rounded-md px-3 py-2 text-xs text-slate-900"
-                />
-              </div>
-            </div>
-          </div>
-
-          <div className="border-t border-slate-100 pt-4 space-y-3">
-            <h4 className="text-xs font-bold text-slate-900 uppercase tracking-wider">Health & Retirement</h4>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div>
-                <label className="block text-xs font-medium text-slate-700 mb-1">Health Insurance Self/Family (₹)</label>
-                <input
-                  type="number"
-                  value={profile.healthInsuranceSelf}
-                  onChange={(e) => handleChange('healthInsuranceSelf', parseFloat(e.target.value) || 0)}
-                  className="w-full bg-slate-50 border border-slate-200 rounded-md px-3 py-2 text-xs text-slate-900"
-                />
-              </div>
-
-              <div>
-                <label className="block text-xs font-medium text-slate-700 mb-1">NPS (80CCD 1B) (₹)</label>
-                <input
-                  type="number"
-                  value={profile.nps}
-                  onChange={(e) => handleChange('nps', parseFloat(e.target.value) || 0)}
-                  className="w-full bg-slate-50 border border-slate-200 rounded-md px-3 py-2 text-xs text-slate-900"
-                />
-              </div>
-            </div>
-          </div>
-
-          <div className="pt-4 flex justify-end">
-            <button
-              onClick={() => onAnalyze(profile)}
-              className="bg-slate-900 hover:bg-slate-800 text-white font-semibold text-xs px-5 py-2.5 rounded-lg transition-colors"
-            >
-              Analyze Profile
-            </button>
-          </div>
         </div>
       )}
 

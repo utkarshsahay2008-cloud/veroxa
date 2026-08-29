@@ -7,7 +7,7 @@
     "category": "Investments",
     "maximumAllowed": 150000,
     "requiredInputFields": ["ppf", "lifeInsurance", "elss", "epf", "tuitionFees", "homeLoanPrincipal"],
-    "description": "Deduction for investments in PPF, ELSS, EPF, Life Insurance Premium, Home Loan Principal, etc.",
+    "description": "Deduction for investments in PPF, ELSS, EPF, Life Insurance Premium, Home Loan Principal, and School Tuition Fees.",
     "source": "Income Tax Act 1961 - Section 80C",
     "effectiveYear": "FY 2024-25",
     "conditions": [
@@ -22,7 +22,7 @@
   },
   {
     "ruleId": "80D",
-    "name": "Section 80D — Medical Insurance Premium",
+    "name": "Section 80D — Medical Insurance & Preventive Checkup",
     "version": "1.0",
     "applicableRegime": "Old Tax Regime",
     "category": "Health",
@@ -31,10 +31,11 @@
       "selfFamilyNonSenior": 25000,
       "selfFamilySenior": 50000,
       "parentsNonSenior": 25000,
-      "parentsSenior": 50000
+      "parentsSenior": 50000,
+      "preventiveCheckup": 5000
     },
-    "requiredInputFields": ["healthInsuranceSelf", "healthInsuranceParents", "age", "parentsAge"],
-    "description": "Deduction for medical insurance premium paid for self, family, and parents.",
+    "requiredInputFields": ["healthInsuranceSelf", "healthInsuranceParents", "preventiveHealthCheckup", "age", "parentsAge"],
+    "description": "Deduction for medical insurance premium paid for self, family, and parents, plus preventive health checkups.",
     "source": "Income Tax Act 1961 - Section 80D",
     "effectiveYear": "FY 2024-25",
     "conditions": [
@@ -42,7 +43,7 @@
         "field": "healthInsuranceTotal",
         "operator": ">",
         "value": 0,
-        "description": "User has reported health insurance premium payments for self, family, or parents."
+        "description": "User has reported health insurance premium payments or preventive health checkups."
       }
     ],
     "explanationTemplate": "Under Section 80D, health insurance premiums qualify up to ₹25,000 for self/family (₹50,000 if senior citizen) plus up to ₹25,000/₹50,000 for parents. You reported ₹{inputValue}, resulting in a deduction of ₹{potentialDeduction}."
@@ -90,6 +91,27 @@
     "explanationTemplate": "Interest paid on home loan for self-occupied property is deductible up to ₹2,00,000 under Section 24(b). You paid ₹{inputValue}, giving a deduction of ₹{potentialDeduction}."
   },
   {
+    "ruleId": "80E",
+    "name": "Section 80E — Higher Education Loan Interest",
+    "version": "1.0",
+    "applicableRegime": "Old Tax Regime",
+    "category": "Education",
+    "maximumAllowed": 500000,
+    "requiredInputFields": ["educationLoanInterest"],
+    "description": "Deduction for full interest paid on loan taken for higher education of self, spouse, or children (No upper monetary limit).",
+    "source": "Income Tax Act 1961 - Section 80E",
+    "effectiveYear": "FY 2024-25",
+    "conditions": [
+      {
+        "field": "educationLoanInterest",
+        "operator": ">",
+        "value": 0,
+        "description": "User paid interest on loan taken for higher education."
+      }
+    ],
+    "explanationTemplate": "Under Section 80E, 100% of interest paid on higher education loans is deductible under the Old Tax Regime without an upper monetary limit. You reported ₹{inputValue}, granting full ₹{potentialDeduction} deduction."
+  },
+  {
     "ruleId": "80EEB",
     "name": "Section 80EEB — Electric Vehicle (EV) Loan Interest",
     "version": "1.0",
@@ -97,7 +119,7 @@
     "category": "Vehicle & Transport",
     "maximumAllowed": 150000,
     "requiredInputFields": ["evLoanInterest"],
-    "description": "Deduction for interest paid on loan taken for purchasing an Electric Vehicle (EV) for personal or family use.",
+    "description": "Deduction for interest paid on loan taken for purchasing an Electric Vehicle (EV).",
     "source": "Income Tax Act 1961 - Section 80EEB",
     "effectiveYear": "FY 2024-25",
     "conditions": [
@@ -129,7 +151,7 @@
         "description": "User incurred vehicle fuel, maintenance, or depreciation expenses for business/freelance work."
       }
     ],
-    "explanationTemplate": "Under Section 32 & 37, vehicle running costs (fuel, insurance, repair) and 15% annual depreciation are valid business deductions for self-employed/freelancers. Reported: ₹{inputValue}, Allowed: ₹{potentialDeduction}."
+    "explanationTemplate": "Under Section 32 & 37, vehicle running costs and 15% annual depreciation are valid business deductions for self-employed/freelancers. Reported: ₹{inputValue}, Allowed: ₹{potentialDeduction}."
   },
   {
     "ruleId": "80GG",

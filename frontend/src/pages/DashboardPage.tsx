@@ -3,10 +3,10 @@ import { CompleteAnalysisResponse } from '../types';
 import { HouseholdSnapshot } from '../components/HouseholdSnapshot';
 import { TaxCheckupHero } from '../components/TaxCheckupHero';
 import { DontLeaveMoneyOnTable } from '../components/DontLeaveMoneyOnTable';
-import { RegimeComparison } from '../components/RegimeComparison';
 import { LifeEventCheck } from '../components/LifeEventCheck';
 import { DeductionCard } from '../components/DeductionCard';
 import { SchemeCard } from '../components/SchemeCard';
+import { UnderstandYourTax } from '../components/UnderstandYourTax';
 import { ChatAssistant } from '../components/ChatAssistant';
 
 interface DashboardPageProps {
@@ -16,12 +16,7 @@ interface DashboardPageProps {
 
 export const DashboardPage: React.FC<DashboardPageProps> = ({ analysis, onEditProfile }) => {
   const [selectedRuleIdForModal, setSelectedRuleIdForModal] = useState<string | null>(null);
-  const regimeRef = React.useRef<HTMLDivElement>(null);
   const deductionsRef = React.useRef<HTMLDivElement>(null);
-
-  const scrollToRegime = () => {
-    regimeRef.current?.scrollIntoView({ behavior: 'smooth' });
-  };
 
   const scrollToDeductions = () => {
     deductionsRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -45,11 +40,11 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ analysis, onEditPr
         />
       </section>
 
-      {/* 2. VEROXA TAX CHECKUP HERO */}
+      {/* 2. THE MAIN RESULT (TAX CHECKUP HERO) */}
       <section>
         <TaxCheckupHero
           analysis={analysis}
-          onSeeWhy={scrollToRegime}
+          onSeeWhy={scrollToDeductions}
         />
       </section>
 
@@ -58,12 +53,7 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ analysis, onEditPr
         <DontLeaveMoneyOnTable deductions={analysis.deductions} />
       </section>
 
-      {/* 4. WHICH REGIME FITS YOUR SITUATION? */}
-      <section ref={regimeRef}>
-        <RegimeComparison analysis={analysis.taxAnalysis} />
-      </section>
-
-      {/* 5. WHAT CHANGED THIS YEAR? (LIFE EVENT TAX CHECK) */}
+      {/* 4. WHAT CHANGED THIS YEAR? (LIFE EVENT CHECK) */}
       <section>
         <LifeEventCheck
           analysis={analysis}
@@ -71,13 +61,13 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ analysis, onEditPr
         />
       </section>
 
-      {/* 6. WHY THESE RECOMMENDATIONS APPEARED */}
+      {/* 5. WHY THESE RECOMMENDATIONS APPEARED */}
       <section ref={deductionsRef} className="space-y-6">
         <div className="flex items-center justify-between border-b border-slate-200 pb-3">
           <div>
-            <h3 className="text-xl font-bold text-slate-900">Why These Recommendations Appeared</h3>
-            <p className="text-xs text-slate-500 mt-0.5">
-              Compact evaluation of all Chapter VI-A rules for your household
+            <h2 className="text-xl font-bold text-slate-900">Why these recommendations appeared</h2>
+            <p className="text-xs text-slate-600 mt-0.5">
+              Compact evaluation of Chapter VI-A rules for your household
             </p>
           </div>
           <span className="text-xs font-semibold bg-slate-100 text-slate-700 px-3 py-1 rounded-md border border-slate-200">
@@ -95,8 +85,8 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ analysis, onEditPr
         <div className="pt-6 space-y-4">
           <div className="flex items-center justify-between border-b border-slate-100 pb-3">
             <div>
-              <h4 className="text-lg font-bold text-slate-900">Potentially Relevant Government Schemes</h4>
-              <p className="text-xs text-slate-500 mt-0.5">
+              <h3 className="text-lg font-bold text-slate-900">Potentially Relevant Government Schemes</h3>
+              <p className="text-xs text-slate-600 mt-0.5">
                 Evaluated against configured government scheme eligibility criteria
               </p>
             </div>
@@ -113,12 +103,17 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ analysis, onEditPr
         </div>
       </section>
 
+      {/* 6. UNDERSTAND YOUR TAX */}
+      <section>
+        <UnderstandYourTax />
+      </section>
+
       {/* 7. ASK VEROXA AI ASSISTANT */}
       <section className="space-y-4 pt-4 border-t border-slate-200">
         <div className="space-y-1">
-          <h3 className="text-xl font-bold text-slate-900">Ask Veroxa</h3>
-          <p className="text-xs text-slate-500">
-            Ask questions about your tax analysis, deductions, or regime selection. Answers are strictly derived from verified rule-engine results.
+          <h2 className="text-xl font-bold text-slate-900">Ask Veroxa</h2>
+          <p className="text-xs text-slate-600">
+            Ask questions about your tax checkup, deductions, or regime selection. Answers are strictly derived from verified rule-engine results.
           </p>
         </div>
 

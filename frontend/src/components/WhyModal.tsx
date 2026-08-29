@@ -1,5 +1,5 @@
-import React from 'react';
-import { X, Check, AlertCircle } from 'lucide-react';
+import React, { useState } from 'react';
+import { X, Check, AlertCircle, ExternalLink } from 'lucide-react';
 import { DeductionResult, SchemeResult } from '../types';
 
 interface WhyModalProps {
@@ -11,6 +11,8 @@ interface WhyModalProps {
 }
 
 export const WhyModal: React.FC<WhyModalProps> = ({ isOpen, onClose, title, deduction, scheme }) => {
+  const [showTechnical, setShowTechnical] = useState(false);
+
   if (!isOpen) return null;
 
   return (
@@ -20,7 +22,9 @@ export const WhyModal: React.FC<WhyModalProps> = ({ isOpen, onClose, title, dedu
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex items-center justify-between border-b border-slate-100 pb-3">
-          <h3 className="text-base font-bold text-slate-900">{title}</h3>
+          <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500 bg-slate-100 px-2 py-0.5 rounded">
+            WHY THIS APPEARED
+          </span>
           <button
             onClick={onClose}
             className="p-1 text-slate-400 hover:text-slate-700 transition-colors"
@@ -31,56 +35,58 @@ export const WhyModal: React.FC<WhyModalProps> = ({ isOpen, onClose, title, dedu
 
         {deduction && (
           <div className="space-y-4 text-xs">
-            <div className="bg-slate-50 p-4 rounded-lg border border-slate-200 space-y-2">
-              <div className="flex justify-between">
-                <span className="text-slate-500">Configured Rule</span>
-                <span className="font-semibold text-slate-900">Section {deduction.ruleId}</span>
+            {/* Human Explanation First */}
+            <div className="bg-emerald-50/80 border border-emerald-200 rounded-lg p-4 text-emerald-900 space-y-1">
+              <span className="font-bold text-[11px] uppercase tracking-wider block text-emerald-800">IN SIMPLE TERMS</span>
+              <p className="text-xs font-medium leading-relaxed">
+                {deduction.eligible 
+                  ? `Your reported ${deduction.name.toLowerCase()} payment may qualify for a tax deduction under the configured rule.`
+                  : `This deduction requirement is currently unmet based on your reported household information.`}
+              </p>
+            </div>
+
+            {/* Simple Breakdown Table */}
+            <div className="bg-slate-50 p-4 rounded-lg border border-slate-200 space-y-2.5">
+              <div className="flex justify-between py-1 border-b border-slate-200/60">
+                <span className="text-slate-500">You reported</span>
+                <span className="font-bold text-slate-900">₹{deduction.inputValue.toLocaleString('en-IN')}</span>
               </div>
-              <div className="flex justify-between">
-                <span className="text-slate-500">Your Reported Data</span>
-                <span className="font-semibold text-slate-900">₹{deduction.inputValue.toLocaleString('en-IN')}</span>
+
+              <div className="flex justify-between py-1 border-b border-slate-200/60">
+                <span className="text-slate-500">Relevant rule</span>
+                <span className="font-bold text-slate-900">Section {deduction.ruleId}</span>
               </div>
-              <div className="flex justify-between">
-                <span className="text-slate-500">Statutory Ceiling</span>
-                <span className="font-semibold text-slate-900">₹{deduction.maximumAllowed.toLocaleString('en-IN')}</span>
+
+              <div className="flex justify-between py-1 border-b border-slate-200/60">
+                <span className="text-slate-500">Maximum considered under rule</span>
+                <span className="font-bold text-slate-900">₹{deduction.maximumAllowed.toLocaleString('en-IN')}</span>
               </div>
-              <div className="flex justify-between border-t border-slate-200 pt-2 font-bold">
-                <span>Allowed Deduction</span>
-                <span className="text-emerald-700">₹{deduction.potentialDeduction.toLocaleString('en-IN')}</span>
+
+              <div className="flex justify-between pt-1 font-bold">
+                <span className="text-slate-800">Potentially applicable</span>
+                <span className="text-emerald-800 text-sm">₹{deduction.potentialDeduction.toLocaleString('en-IN')}</span>
               </div>
             </div>
 
-            <div className="space-y-2">
-              <span className="font-bold text-slate-900 uppercase tracking-wider text-[11px]">Condition Evaluation</span>
+            {/* Optional Technical Reference Toggle */}
+            <div className="pt-1">
+              <button
+                onClick={() => setShowTechnical(!showTechnical)}
+                className="text-[11px] font-semibold text-slate-700 hover:text-slate-900 flex items-center gap-1 hover:underline"
+              >
+                {showTechnical ? 'Hide technical rule reference' : 'View technical rule reference →'}
+              </button>
 
-              {deduction.passedConditions.length > 0 && (
-                <div className="space-y-1">
-                  <span className="font-semibold text-emerald-800">Passed Conditions:</span>
-                  {deduction.passedConditions.map((cond, idx) => (
-                    <div key={idx} className="bg-emerald-50 text-emerald-900 p-2 rounded-md border border-emerald-200 flex items-start gap-2">
-                      <Check className="w-3.5 h-3.5 text-emerald-700 shrink-0 mt-0.5" />
-                      <span>{cond}</span>
-                    </div>
-                  ))}
+              {showTechnical && (
+                <div className="mt-3 bg-slate-900 text-slate-200 p-3.5 rounded-lg text-[11px] space-y-2 font-mono">
+                  <div className="text-amber-300">// {deduction.source} ({deduction.effectiveYear})</div>
+                  <div>Passed: {deduction.passedConditions.join(', ') || 'None'}</div>
+                  {deduction.failedConditions.length > 0 && (
+                    <div className="text-slate-400">Failed: {deduction.failedConditions.join(', ')}</div>
+                  )}
+                  <p className="font-sans text-xs text-slate-300 pt-1 border-t border-slate-800">{deduction.explanation}</p>
                 </div>
               )}
-
-              {deduction.failedConditions.length > 0 && (
-                <div className="space-y-1">
-                  <span className="font-semibold text-slate-600">Unmet Criteria:</span>
-                  {deduction.failedConditions.map((cond, idx) => (
-                    <div key={idx} className="bg-slate-50 text-slate-700 p-2 rounded-md border border-slate-200 flex items-start gap-2">
-                      <AlertCircle className="w-3.5 h-3.5 text-slate-400 shrink-0 mt-0.5" />
-                      <span>{cond}</span>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-
-            <div className="bg-slate-50 p-3 rounded-lg border border-slate-200 text-slate-600 leading-relaxed">
-              <strong className="block text-slate-900 font-semibold mb-1">Official Reference:</strong>
-              {deduction.source} ({deduction.effectiveYear}) — {deduction.reason}
             </div>
           </div>
         )}
@@ -90,46 +96,18 @@ export const WhyModal: React.FC<WhyModalProps> = ({ isOpen, onClose, title, dedu
             <div className="bg-slate-50 p-4 rounded-lg border border-slate-200 space-y-2">
               <div className="flex justify-between">
                 <span className="text-slate-500">Scheme ID</span>
-                <span className="font-semibold text-slate-900">{scheme.schemeId}</span>
+                <span className="font-bold text-slate-900">{scheme.schemeId}</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-slate-500">Category</span>
-                <span className="font-semibold text-slate-900">{scheme.category}</span>
+                <span className="font-bold text-slate-900">{scheme.category}</span>
               </div>
               <div className="flex justify-between border-t border-slate-200 pt-2 font-bold">
                 <span>Eligibility Status</span>
-                <span className={scheme.eligible ? 'text-emerald-700' : 'text-slate-600'}>
+                <span className={scheme.eligible ? 'text-emerald-800' : 'text-slate-600'}>
                   {scheme.eligible ? 'Potentially Eligible' : 'Ineligible'}
                 </span>
               </div>
-            </div>
-
-            <div className="space-y-2">
-              <span className="font-bold text-slate-900 uppercase tracking-wider text-[11px]">Condition Evaluation</span>
-
-              {scheme.passedConditions.length > 0 && (
-                <div className="space-y-1">
-                  <span className="font-semibold text-emerald-800">Passed Conditions:</span>
-                  {scheme.passedConditions.map((cond, idx) => (
-                    <div key={idx} className="bg-emerald-50 text-emerald-900 p-2 rounded-md border border-emerald-200 flex items-start gap-2">
-                      <Check className="w-3.5 h-3.5 text-emerald-700 shrink-0 mt-0.5" />
-                      <span>{cond}</span>
-                    </div>
-                  ))}
-                </div>
-              )}
-
-              {scheme.failedConditions.length > 0 && (
-                <div className="space-y-1">
-                  <span className="font-semibold text-slate-600">Unmet Conditions:</span>
-                  {scheme.failedConditions.map((cond, idx) => (
-                    <div key={idx} className="bg-slate-50 text-slate-700 p-2 rounded-md border border-slate-200 flex items-start gap-2">
-                      <AlertCircle className="w-3.5 h-3.5 text-slate-400 shrink-0 mt-0.5" />
-                      <span>{cond}</span>
-                    </div>
-                  ))}
-                </div>
-              )}
             </div>
 
             <div className="bg-slate-50 p-3 rounded-lg border border-slate-200 text-slate-600 leading-relaxed">
@@ -144,7 +122,7 @@ export const WhyModal: React.FC<WhyModalProps> = ({ isOpen, onClose, title, dedu
             onClick={onClose}
             className="bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold px-4 py-2 rounded-md transition-colors"
           >
-            Close Explanation
+            Close explanation
           </button>
         </div>
       </div>

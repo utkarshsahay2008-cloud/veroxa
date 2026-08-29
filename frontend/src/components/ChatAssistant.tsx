@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { CompleteAnalysisResponse } from '../types';
 import { sendChatMessage } from '../services/api';
-import { Send, RotateCcw } from 'lucide-react';
+import { Send, RotateCcw, HelpCircle } from 'lucide-react';
 
 interface ChatAssistantProps {
   analysisContext: CompleteAnalysisResponse;
@@ -17,7 +17,7 @@ export const ChatAssistant: React.FC<ChatAssistantProps> = ({ analysisContext })
   const [messages, setMessages] = useState<Message[]>([
     {
       sender: 'bot',
-      text: `Hello. Ask me any simple or complex tax question about your vehicle (EV loan Sec 80EEB / business depreciation), home loan interest, regime selection, Chapter VI-A deductions, or government schemes. All answers are derived directly from your verified rule-engine results.`,
+      text: `Hello. Ask me any question about your tax checkup, regime recommendation, or specific deductions. All answers are derived directly from your verified rule-engine results.`,
       timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
     }
   ]);
@@ -26,10 +26,11 @@ export const ChatAssistant: React.FC<ChatAssistantProps> = ({ analysisContext })
   const chatEndRef = useRef<HTMLDivElement>(null);
 
   const samplePrompts = [
-    'What tax benefits apply to my vehicle / EV loan?',
-    'How does Section 80EEB work for electric vehicle loans?',
-    'Can I claim car depreciation or fuel expenses?',
-    'Why is Old Regime better for my home & EV loans?'
+    'Why is the Old Regime better for me?',
+    'Explain Section 80D simply',
+    'How was my tax calculated?',
+    'What am I missing?',
+    'Why do I need this information?'
   ];
 
   useEffect(() => {
@@ -73,12 +74,15 @@ export const ChatAssistant: React.FC<ChatAssistantProps> = ({ analysisContext })
   };
 
   return (
-    <div className="bg-white rounded-xl border border-slate-200 flex flex-col h-[520px]">
-      {/* Header */}
-      <div className="p-4 border-b border-slate-200 flex items-center justify-between bg-slate-50 rounded-t-xl">
-        <div>
-          <h3 className="font-bold text-sm text-slate-900">Ask Veroxa</h3>
-          <p className="text-[11px] text-slate-500">Comprehensive responses anchored in verified rule-engine analysis</p>
+    <div className="bg-white rounded-xl border border-slate-200 flex flex-col h-[500px]">
+      {/* Header per Master Prompt Section 7 */}
+      <div className="p-4 border-b border-slate-200 flex items-center justify-between bg-purple-50/50 rounded-t-xl">
+        <div className="flex items-center gap-2">
+          <HelpCircle className="w-4 h-4 text-purple-700 shrink-0" />
+          <div>
+            <h3 className="font-bold text-xs text-slate-900 uppercase tracking-wider">Ask Veroxa</h3>
+            <p className="text-[11px] text-purple-900 font-medium">Your tax explanation assistant</p>
+          </div>
         </div>
 
         <button
@@ -100,7 +104,7 @@ export const ChatAssistant: React.FC<ChatAssistantProps> = ({ analysisContext })
             <div className={`w-7 h-7 rounded-md shrink-0 flex items-center justify-center text-xs font-bold ${
               msg.sender === 'user' 
                 ? 'bg-slate-900 text-white' 
-                : 'bg-slate-200 text-slate-800'
+                : 'bg-purple-100 text-purple-900'
             }`}>
               {msg.sender === 'user' ? 'U' : 'V'}
             </div>
@@ -108,7 +112,7 @@ export const ChatAssistant: React.FC<ChatAssistantProps> = ({ analysisContext })
             <div className={`rounded-lg p-3.5 text-xs sm:text-sm leading-relaxed space-y-1 ${
               msg.sender === 'user'
                 ? 'bg-slate-900 text-white'
-                : 'bg-white text-slate-900 border border-slate-200 shadow-xs'
+                : 'bg-white text-slate-900 border border-slate-200'
             }`}>
               <div className="whitespace-pre-wrap">{msg.text}</div>
               <span className={`text-[10px] block text-right pt-1 ${
@@ -122,11 +126,11 @@ export const ChatAssistant: React.FC<ChatAssistantProps> = ({ analysisContext })
 
         {loading && (
           <div className="flex gap-3 max-w-[80%]">
-            <div className="w-7 h-7 rounded-md bg-slate-200 text-slate-800 flex items-center justify-center text-xs font-bold shrink-0">
+            <div className="w-7 h-7 rounded-md bg-purple-100 text-purple-900 flex items-center justify-center text-xs font-bold shrink-0">
               V
             </div>
             <div className="bg-white border border-slate-200 p-3.5 rounded-lg text-xs text-slate-500">
-              Analyzing rule engine context and preparing comprehensive tax response...
+              Translating verified rule context into clear human language...
             </div>
           </div>
         )}
@@ -156,7 +160,7 @@ export const ChatAssistant: React.FC<ChatAssistantProps> = ({ analysisContext })
           type="text"
           value={input}
           onChange={(e) => setInput(e.target.value)}
-          placeholder="Ask a question about vehicle tax, EV loans, depreciation, or regime comparison..."
+          placeholder="Ask a question about your tax checkup..."
           className="flex-1 bg-slate-50 border border-slate-200 rounded-md px-3.5 py-2 text-xs text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-1 focus:ring-slate-400"
         />
         <button

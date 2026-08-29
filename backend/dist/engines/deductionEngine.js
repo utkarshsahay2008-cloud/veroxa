@@ -20,7 +20,7 @@ function evaluateDeductions(profile) {
             const homeLoanPrincipal = profile.homeLoanPrincipal || 0;
             inputValue = ppf + lifeInsurance + elss + epf + tuitionFees + homeLoanPrincipal;
             if (inputValue > 0) {
-                passedConditions.push(`Reported total eligible investments of ₹${inputValue.toLocaleString('en-IN')}`);
+                passedConditions.push(`Reported total eligible Section 80C investments of ₹${inputValue.toLocaleString('en-IN')}`);
             }
             else {
                 failedConditions.push('No eligible Section 80C investments or expenses reported');
@@ -30,22 +30,26 @@ function evaluateDeductions(profile) {
         else if (rule.ruleId === '80D') {
             const selfPrem = profile.healthInsuranceSelf || 0;
             const parentPrem = profile.healthInsuranceParents || 0;
+            const prevCheckup = Math.min(profile.preventiveHealthCheckup || 0, 5000);
             const selfSenior = profile.age >= 60;
             const parentSenior = profile.parentsAge ? profile.parentsAge >= 60 : false;
             const selfCap = selfSenior ? (rule.subLimits?.selfFamilySenior || 50000) : (rule.subLimits?.selfFamilyNonSenior || 25000);
             const parentCap = parentSenior ? (rule.subLimits?.parentsSenior || 50000) : (rule.subLimits?.parentsNonSenior || 25000);
-            const allowedSelf = Math.min(selfPrem, selfCap);
+            const allowedSelf = Math.min(selfPrem + prevCheckup, selfCap);
             const allowedParent = Math.min(parentPrem, parentCap);
-            inputValue = selfPrem + parentPrem;
+            inputValue = selfPrem + parentPrem + (profile.preventiveHealthCheckup || 0);
             potentialDeduction = allowedSelf + allowedParent;
             if (selfPrem > 0) {
                 passedConditions.push(`Self/Family health insurance: ₹${selfPrem.toLocaleString('en-IN')} (Cap: ₹${selfCap.toLocaleString('en-IN')})`);
+            }
+            if (prevCheckup > 0) {
+                passedConditions.push(`Preventive health checkup: ₹${prevCheckup.toLocaleString('en-IN')} (Cap: ₹5,000 within 80D)`);
             }
             if (parentPrem > 0) {
                 passedConditions.push(`Parents health insurance: ₹${parentPrem.toLocaleString('en-IN')} (Cap: ₹${parentCap.toLocaleString('en-IN')}${parentSenior ? ' - Senior Citizen rate' : ''})`);
             }
             if (inputValue === 0) {
-                failedConditions.push('No medical insurance premium payments reported');
+                failedConditions.push('No medical insurance premium or preventive checkup expenses reported');
             }
         }
         else if (rule.ruleId === '80CCD_1B') {
@@ -66,6 +70,16 @@ function evaluateDeductions(profile) {
             }
             else {
                 failedConditions.push('No home loan interest payments reported');
+            }
+        }
+        else if (rule.ruleId === '80E') {
+            inputValue = profile.educationLoanInterest || 0;
+            potentialDeduction = inputValue; // 100% deductible without upper ceiling
+            if (inputValue > 0) {
+                passedConditions.push(`Paid ₹${inputValue.toLocaleString('en-IN')} interest on higher education loan under Section 80E (100% deductible)`);
+            }
+            else {
+                failedConditions.push('No higher education loan interest reported');
             }
         }
         else if (rule.ruleId === '80EEB') {
@@ -103,7 +117,7 @@ function evaluateDeductions(profile) {
             if (rent > 0 && hra === 0) {
                 passedConditions.push(`Pays rent (₹${rent.toLocaleString('en-IN')}/yr) and receives ₹0 HRA from employer`);
                 const option1 = Math.max(0, rent - 0.10 * income);
-                const option2 = 60000; // ₹5,000 per month
+                const option2 = 60000;
                 const option3 = 0.25 * income;
                 potentialDeduction = Math.min(option1, option2, option3);
                 passedConditions.push(`Calculated Section 80GG claim limit: ₹${Math.round(potentialDeduction).toLocaleString('en-IN')}`);
@@ -142,7 +156,7 @@ function evaluateDeductions(profile) {
         }
         let reason = '';
         if (eligible) {
-            if (inputValue > potentialDeduction) {
+            if (inputValue > potentialDeduction && rule.maximumAllowed > 0 && rule.ruleId !== '80E') {
                 reason = `Your total reported expense of ₹${inputValue.toLocaleString('en-IN')} exceeds the Section ${rule.ruleId} statutory ceiling of ₹${rule.maximumAllowed.toLocaleString('en-IN')}. Allowed deduction capped at ₹${potentialDeduction.toLocaleString('en-IN')}.`;
             }
             else {

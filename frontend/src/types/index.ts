@@ -21,12 +21,15 @@ export interface UserProfile {
   healthInsuranceSelf: number;
   healthInsuranceParents: number;
   parentsAge: number | null;
+  preventiveHealthCheckup?: number;
   nps: number;
   homeLoanInterest: number;
   evLoanInterest?: number;
+  educationLoanInterest?: number;
   vehicleExpenses?: number;
   propertyType?: string;
   savingsInterest: number;
+  fdInterest?: number;
   hasGirlChild: boolean;
   girlChildAge: number | null;
   isTaxPayer?: boolean;
