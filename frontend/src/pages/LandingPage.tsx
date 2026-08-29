@@ -1,6 +1,7 @@
 import React from 'react';
 import { ArrowRight, ArrowDown } from 'lucide-react';
 import { SyntheticPersona } from '../types';
+import { InteractiveProcessExplorer } from '../components/InteractiveProcessExplorer';
 
 interface LandingPageProps {
   personas: SyntheticPersona[];
@@ -16,7 +17,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ personas, onSelectPers
   };
 
   return (
-    <div className="space-y-20 py-12 sm:py-16">
+    <div className="space-y-16 py-10 sm:py-14">
       {/* Hero Section */}
       <section className="max-w-4xl mx-auto px-4 text-center space-y-6">
         <div className="inline-block text-xs font-semibold text-slate-500 uppercase tracking-widest bg-slate-100 border border-slate-200 px-3 py-1 rounded-full">
@@ -32,7 +33,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ personas, onSelectPers
           Veroxa turns complex tax rules into simple, personalized guidance and explains why each recommendation applies.
         </p>
 
-        <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-4">
+        <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-3">
           <button
             onClick={onTryDemo}
             className="w-full sm:w-auto bg-slate-900 hover:bg-slate-800 text-white font-semibold text-sm px-6 py-3 rounded-lg transition-colors flex items-center justify-center gap-2"
@@ -50,9 +51,9 @@ export const LandingPage: React.FC<LandingPageProps> = ({ personas, onSelectPers
           </button>
         </div>
 
-        {/* Minimalist Product Preview Mockup */}
-        <div className="pt-8">
-          <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-6 max-w-2xl mx-auto text-left space-y-4">
+        {/* Product Snapshot Preview */}
+        <div className="pt-6">
+          <div className="bg-white rounded-xl border border-slate-200 p-6 max-w-2xl mx-auto text-left space-y-4">
             <div className="flex items-center justify-between border-b border-slate-100 pb-3 text-xs text-slate-500">
               <span className="font-semibold text-slate-900">Tax Snapshot Preview — FY 2024-25</span>
               <span className="bg-emerald-50 text-emerald-700 font-medium px-2 py-0.5 rounded">Recommended: Old Tax Regime</span>
@@ -117,38 +118,9 @@ export const LandingPage: React.FC<LandingPageProps> = ({ personas, onSelectPers
         </div>
       </section>
 
-      {/* How It Works Section (Editorial 01 / 02 / 03 structure) */}
-      <section ref={howItWorksRef} className="max-w-4xl mx-auto px-4 space-y-8">
-        <div className="border-t border-slate-200 pt-12 space-y-1">
-          <h2 className="text-xl font-bold text-slate-900">How Veroxa Works</h2>
-          <p className="text-xs text-slate-500">Deterministic evaluation separated from natural-language explanation</p>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          <div className="space-y-2">
-            <span className="text-xs font-bold text-slate-400 tracking-wider">01</span>
-            <h3 className="font-semibold text-slate-900 text-base">Understand</h3>
-            <p className="text-xs text-slate-600 leading-relaxed">
-              Your financial information is converted into a normalized profile containing income, rent, insurance, and investment details.
-            </p>
-          </div>
-
-          <div className="space-y-2">
-            <span className="text-xs font-bold text-slate-400 tracking-wider">02</span>
-            <h3 className="font-semibold text-slate-900 text-base">Check</h3>
-            <p className="text-xs text-slate-600 leading-relaxed">
-              Veroxa evaluates configured tax rules and eligibility requirements deterministically under Old & New Tax Regimes.
-            </p>
-          </div>
-
-          <div className="space-y-2">
-            <span className="text-xs font-bold text-slate-400 tracking-wider">03</span>
-            <h3 className="font-semibold text-slate-900 text-base">Explain</h3>
-            <p className="text-xs text-slate-600 leading-relaxed">
-              Every recommendation explains why it applies, detailing the exact rule, calculation, statutory limit, and verified conditions.
-            </p>
-          </div>
-        </div>
+      {/* Interactive Process Explorer (Replaces static 3 cards) */}
+      <section ref={howItWorksRef} className="max-w-5xl mx-auto px-4">
+        <InteractiveProcessExplorer />
       </section>
     </div>
   );
