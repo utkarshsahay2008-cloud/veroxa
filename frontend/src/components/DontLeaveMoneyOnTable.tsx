@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { DeductionResult } from '../types';
-import { ShieldCheck, Info } from 'lucide-react';
+import { ShieldCheck, ChevronDown, ChevronUp } from 'lucide-react';
 import { WhyModal } from './WhyModal';
 
 interface DontLeaveMoneyOnTableProps {
@@ -9,17 +9,21 @@ interface DontLeaveMoneyOnTableProps {
 
 export const DontLeaveMoneyOnTable: React.FC<DontLeaveMoneyOnTableProps> = ({ deductions }) => {
   const [selectedDeduction, setSelectedDeduction] = useState<DeductionResult | null>(null);
+  const [showAll, setShowAll] = useState<boolean>(false);
+
   const eligibleDeductions = deductions.filter(d => d.eligible);
+  const visibleDeductions = showAll ? eligibleDeductions : eligibleDeductions.slice(0, 3);
+  const hasMore = eligibleDeductions.length > 3;
 
   return (
     <div className="bg-white rounded-xl border border-slate-200 p-6 sm:p-8 space-y-6">
       <div className="space-y-1 border-b border-slate-100 pb-4">
-        <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500 bg-slate-100 px-2 py-0.5 rounded">
-          HOUSEHOLD TAX CHECKUP
+        <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500 bg-slate-100 px-2.5 py-0.5 rounded">
+          FEATURED OPPORTUNITIES
         </span>
         <h2 className="text-xl sm:text-2xl font-bold text-slate-900 mt-1">Don't leave money on the table</h2>
         <p className="text-xs text-slate-600">
-          Based on the information you provided, here are potential tax opportunities for expenses or investments you may already have.
+          We found a few potential opportunities worth checking based on your household information.
         </p>
       </div>
 
@@ -30,54 +34,40 @@ export const DontLeaveMoneyOnTable: React.FC<DontLeaveMoneyOnTableProps> = ({ de
           Veroxa Trust Philosophy
         </div>
         <p className="leading-relaxed">
-          Tax benefits should not be the only reason to make a financial decision. Veroxa prioritizes understanding your existing household expenses over encouraging new unnecessary spending.
+          Tax benefits should not be the only reason to make a financial decision. We focus on identifying tax treatments for expenses you already have.
         </p>
       </div>
 
-      {/* Opportunities Grid */}
+      {/* Top 3 Opportunities Grid */}
       <div className="space-y-4">
-        {eligibleDeductions.map((d) => (
+        {visibleDeductions.map((d, idx) => (
           <div key={d.ruleId} className="bg-slate-50 rounded-lg border border-slate-200 p-5 space-y-3">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-200/60 pb-3">
-              <div>
-                <span className="text-[10px] font-bold uppercase tracking-wider bg-slate-200 text-slate-700 px-2 py-0.5 rounded">
-                  Section {d.ruleId}
-                </span>
-                <h3 className="font-bold text-slate-900 text-base mt-1">{d.name}</h3>
+              <div className="space-y-1">
+                <div className="flex items-center gap-2">
+                  <span className="font-bold text-slate-400 text-xs">0{idx + 1}</span>
+                  <span className="text-[10px] font-bold uppercase tracking-wider bg-slate-200 text-slate-700 px-2 py-0.5 rounded">
+                    Section {d.ruleId}
+                  </span>
+                </div>
+                <h3 className="font-bold text-slate-900 text-base">{d.name}</h3>
+                <p className="text-xs text-slate-600 leading-relaxed max-w-2xl">{d.reason}</p>
               </div>
 
-              <div className="text-left sm:text-right">
+              <div className="text-left sm:text-right shrink-0">
                 <span className="text-[11px] text-slate-500 block">Potential Deduction</span>
                 <span className="text-base font-bold text-slate-900">₹{d.potentialDeduction.toLocaleString('en-IN')}</span>
               </div>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 text-xs pt-1">
-              <div>
-                <span className="text-slate-500 block">WHY IT MATCHED</span>
-                <span className="font-medium text-slate-800">{d.passedConditions[0] || 'Eligible expense detected'}</span>
-              </div>
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs pt-1">
+              <span className="text-slate-500">
+                Reported in profile: <strong className="text-slate-800">₹{d.inputValue.toLocaleString('en-IN')}</strong> (Cap: ₹{d.maximumAllowed.toLocaleString('en-IN')})
+              </span>
 
-              <div>
-                <span className="text-slate-500 block">YOUR INFORMATION</span>
-                <span className="font-medium text-slate-800">Reported: ₹{d.inputValue.toLocaleString('en-IN')}</span>
-              </div>
-
-              <div>
-                <span className="text-slate-500 block">STATUTORY LIMIT</span>
-                <span className="font-medium text-slate-800">Max Allowed: ₹{d.maximumAllowed.toLocaleString('en-IN')}</span>
-              </div>
-
-              <div>
-                <span className="text-slate-500 block">RESULT</span>
-                <span className="font-semibold text-emerald-800">Potentially Applicable</span>
-              </div>
-            </div>
-
-            <div className="pt-2 flex justify-end">
               <button
                 onClick={() => setSelectedDeduction(d)}
-                className="text-xs font-semibold text-slate-900 hover:underline bg-white border border-slate-200 px-3 py-1.5 rounded-md transition-colors"
+                className="text-xs font-semibold text-slate-900 hover:underline bg-white border border-slate-200 px-3.5 py-1.5 rounded-md transition-colors"
               >
                 Why am I seeing this? →
               </button>
@@ -85,6 +75,19 @@ export const DontLeaveMoneyOnTable: React.FC<DontLeaveMoneyOnTableProps> = ({ de
           </div>
         ))}
       </div>
+
+      {/* Show All Toggle */}
+      {hasMore && (
+        <div className="pt-2 flex justify-center">
+          <button
+            onClick={() => setShowAll(!showAll)}
+            className="text-xs font-semibold text-slate-800 hover:text-slate-900 bg-slate-100 hover:bg-slate-200 border border-slate-200 px-4 py-2 rounded-lg transition-colors flex items-center gap-1.5"
+          >
+            {showAll ? 'Show top 3 opportunities only' : `View all potential opportunities (${eligibleDeductions.length})`}
+            {showAll ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
+          </button>
+        </div>
+      )}
 
       <WhyModal
         isOpen={Boolean(selectedDeduction)}

@@ -1,21 +1,27 @@
 import React, { useState } from 'react';
 import { CompleteAnalysisResponse } from '../types';
-import { TaxSnapshot } from '../components/TaxSnapshot';
-import { TaxCheckupOverview } from '../components/TaxCheckupOverview';
+import { HouseholdSnapshot } from '../components/HouseholdSnapshot';
+import { TaxCheckupHero } from '../components/TaxCheckupHero';
 import { DontLeaveMoneyOnTable } from '../components/DontLeaveMoneyOnTable';
 import { RegimeComparison } from '../components/RegimeComparison';
+import { LifeEventCheck } from '../components/LifeEventCheck';
 import { DeductionCard } from '../components/DeductionCard';
 import { SchemeCard } from '../components/SchemeCard';
-import { LifeEventCheck } from '../components/LifeEventCheck';
 import { ChatAssistant } from '../components/ChatAssistant';
 
 interface DashboardPageProps {
   analysis: CompleteAnalysisResponse;
+  onEditProfile: () => void;
 }
 
-export const DashboardPage: React.FC<DashboardPageProps> = ({ analysis }) => {
+export const DashboardPage: React.FC<DashboardPageProps> = ({ analysis, onEditProfile }) => {
   const [selectedRuleIdForModal, setSelectedRuleIdForModal] = useState<string | null>(null);
+  const regimeRef = React.useRef<HTMLDivElement>(null);
   const deductionsRef = React.useRef<HTMLDivElement>(null);
+
+  const scrollToRegime = () => {
+    regimeRef.current?.scrollIntoView({ behavior: 'smooth' });
+  };
 
   const scrollToDeductions = () => {
     deductionsRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -30,39 +36,48 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ analysis }) => {
   const eligibleSchemes = analysis.schemes.filter(s => s.eligible);
 
   return (
-    <div className="max-w-5xl mx-auto space-y-12 py-8 px-4">
-      {/* 1. TAX CHECKUP */}
-      <section className="space-y-6">
-        <TaxSnapshot
-          analysis={analysis.taxAnalysis}
+    <div className="max-w-5xl mx-auto space-y-10 py-8 px-4">
+      {/* 1. HOUSEHOLD SNAPSHOT */}
+      <section>
+        <HouseholdSnapshot
           profile={analysis.profile}
-          fullResponse={analysis}
-          onExploreDeductions={scrollToDeductions}
-        />
-
-        <TaxCheckupOverview
-          analysis={analysis}
-          onExploreDeduction={handleExploreRule}
+          onEdit={onEditProfile}
         />
       </section>
 
-      {/* 2. WHAT YOU MAY BE MISSING ("Don't leave money on the table") */}
+      {/* 2. VEROXA TAX CHECKUP HERO */}
+      <section>
+        <TaxCheckupHero
+          analysis={analysis}
+          onSeeWhy={scrollToRegime}
+        />
+      </section>
+
+      {/* 3. DON'T LEAVE MONEY ON THE TABLE */}
       <section>
         <DontLeaveMoneyOnTable deductions={analysis.deductions} />
       </section>
 
-      {/* 3. OLD VS NEW REGIME ("Which tax regime fits your situation?") */}
-      <section>
+      {/* 4. WHICH REGIME FITS YOUR SITUATION? */}
+      <section ref={regimeRef}>
         <RegimeComparison analysis={analysis.taxAnalysis} />
       </section>
 
-      {/* 4. WHY THESE RECOMMENDATIONS APPEARED */}
+      {/* 5. WHAT CHANGED THIS YEAR? (LIFE EVENT TAX CHECK) */}
+      <section>
+        <LifeEventCheck
+          analysis={analysis}
+          onExploreRule={handleExploreRule}
+        />
+      </section>
+
+      {/* 6. WHY THESE RECOMMENDATIONS APPEARED */}
       <section ref={deductionsRef} className="space-y-6">
         <div className="flex items-center justify-between border-b border-slate-200 pb-3">
           <div>
             <h3 className="text-xl font-bold text-slate-900">Why These Recommendations Appeared</h3>
             <p className="text-xs text-slate-500 mt-0.5">
-              Deterministic Chapter VI-A rule evaluation for your household profile
+              Compact evaluation of all Chapter VI-A rules for your household
             </p>
           </div>
           <span className="text-xs font-semibold bg-slate-100 text-slate-700 px-3 py-1 rounded-md border border-slate-200">
@@ -70,7 +85,7 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ analysis }) => {
           </span>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="space-y-3">
           {analysis.deductions.map((deduction) => (
             <DeductionCard key={deduction.ruleId} deduction={deduction} />
           ))}
@@ -98,15 +113,7 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ analysis }) => {
         </div>
       </section>
 
-      {/* 5. LIFE EVENT CHECK ("What's changed in your life this year?") */}
-      <section>
-        <LifeEventCheck
-          analysis={analysis}
-          onExploreRule={handleExploreRule}
-        />
-      </section>
-
-      {/* 6. ASK VEROXA */}
+      {/* 7. ASK VEROXA AI ASSISTANT */}
       <section className="space-y-4 pt-4 border-t border-slate-200">
         <div className="space-y-1">
           <h3 className="text-xl font-bold text-slate-900">Ask Veroxa</h3>
@@ -117,6 +124,11 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ analysis }) => {
 
         <ChatAssistant analysisContext={analysis} />
       </section>
+
+      {/* DISCLAIMER */}
+      <div className="bg-slate-50 border border-slate-200 rounded-lg p-4 text-[11px] text-slate-500 leading-relaxed text-center">
+        <strong>Educational Guidance Disclaimer:</strong> Veroxa uses configured tax rules and synthetic demo data for educational purposes only. It is not a certified tax authority, tax professional, financial advisor, or tax filing service. No real financial data is stored.
+      </div>
     </div>
   );
 };

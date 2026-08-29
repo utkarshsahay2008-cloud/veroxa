@@ -20,6 +20,11 @@ export const App: React.FC = () => {
     residency: 'Indian Resident',
     occupation: 'salaried',
     annualIncome: 1500000,
+    maritalStatus: 'Married',
+    numberOfChildren: 1,
+    supportingParents: true,
+    hasHomeLoan: true,
+    lifeEvents: ['home_loan', 'supporting_parents'],
     rent: 240000,
     hraReceived: 180000,
     lifeInsurance: 50000,
@@ -33,6 +38,8 @@ export const App: React.FC = () => {
     parentsAge: 62,
     nps: 50000,
     homeLoanInterest: 150000,
+    evLoanInterest: 45000,
+    vehicleExpenses: 0,
     propertyType: 'Self-occupied',
     savingsInterest: 12000,
     hasGirlChild: false,
@@ -109,12 +116,15 @@ export const App: React.FC = () => {
         )}
 
         {currentTab === 'dashboard' && analysis && (
-          <DashboardPage analysis={analysis} />
+          <DashboardPage
+            analysis={analysis}
+            onEditProfile={() => setCurrentTab('profile')}
+          />
         )}
       </main>
 
       <footer className="bg-white border-t border-slate-200 py-6 text-center text-xs text-slate-500 space-y-1">
-        <p><strong>Veroxa</strong> — Explainable AI Tax Guidance & Savings Assistant</p>
+        <p><strong>Veroxa</strong> — Tax Checkup for Middle-Income Households</p>
         <p>Configurable Rule Engine Architecture • Synthetic Data Only • Educational Purpose</p>
       </footer>
     </div>
