@@ -89,10 +89,22 @@ export interface SchemeResult {
   effectiveYear: string;
 }
 
+export interface UnclaimedOpportunity {
+  ruleId: string;
+  name: string;
+  category: string;
+  currentInput: number;
+  maximumAllowed: number;
+  unusedHeadroom: number;
+  estimatedTaxSaving: number;
+  actionRecommendation: string;
+}
+
 export interface CompleteAnalysisResponse {
   profile: UserProfile;
   taxAnalysis: TaxAnalysis;
   deductions: DeductionResult[];
+  unclaimedOpportunities: UnclaimedOpportunity[];
   schemes: SchemeResult[];
   summaryStatements: string[];
   isSyntheticDemoData: boolean;
