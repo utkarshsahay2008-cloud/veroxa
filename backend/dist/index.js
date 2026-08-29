@@ -7,6 +7,7 @@ const express_1 = __importDefault(require("express"));
 const cors_1 = __importDefault(require("cors"));
 const dotenv_1 = __importDefault(require("dotenv"));
 const path_1 = __importDefault(require("path"));
+const fs_1 = __importDefault(require("fs"));
 const analyze_1 = __importDefault(require("./routes/analyze"));
 const chat_1 = __importDefault(require("./routes/chat"));
 const config_1 = __importDefault(require("./routes/config"));
@@ -17,7 +18,7 @@ const app = (0, express_1.default)();
 const PORT = process.env.PORT || 5000;
 app.use((0, cors_1.default)());
 app.use(express_1.default.json({ limit: '10mb' }));
-// Routes
+// API Routes
 app.use('/api', analyze_1.default);
 app.use('/api/chat', chat_1.default);
 app.use('/api/config', config_1.default);
@@ -33,6 +34,16 @@ app.get('/api/health', (req, res) => {
         timestamp: new Date().toISOString()
     });
 });
+// Serve frontend static build files for a single combined server experience
+const frontendDistPath = path_1.default.resolve(__dirname, '../../frontend/dist');
+const altDistPath = path_1.default.resolve(process.cwd(), 'frontend/dist');
+const finalDistPath = fs_1.default.existsSync(frontendDistPath) ? frontendDistPath : altDistPath;
+if (fs_1.default.existsSync(finalDistPath)) {
+    app.use(express_1.default.static(finalDistPath));
+    app.get('*', (req, res) => {
+        res.sendFile(path_1.default.join(finalDistPath, 'index.html'));
+    });
+}
 app.listen(PORT, () => {
-    console.log(`Veroxa Rule Engine Backend running on http://localhost:${PORT}`);
+    console.log(`Veroxa Combined Application running at http://localhost:${PORT}`);
 });
