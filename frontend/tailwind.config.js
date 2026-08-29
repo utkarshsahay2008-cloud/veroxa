@@ -7,17 +7,43 @@ export default {
   theme: {
     extend: {
       colors: {
+        slate: {
+          25: '#fcfcfd',
+          50: '#f8fafc',
+          100: '#f1f5f9',
+          200: '#e2e8f0',
+          300: '#cbd5e1',
+          400: '#94a3b8',
+          500: '#64748b',
+          600: '#475569',
+          700: '#334155',
+          800: '#1e293b',
+          900: '#0f172a',
+          950: '#020617',
+        },
         brand: {
-          50: '#f0f7ff',
-          100: '#e0effe',
-          500: '#0066ff',
-          600: '#0052cc',
-          700: '#003d99',
-          900: '#001e4d',
+          50: '#f8fafc',
+          100: '#f1f5f9',
+          600: '#0f172a', // Deep charcoal / navy primary
+          700: '#1e293b',
+          900: '#020617',
+        },
+        blue: {
+          50: '#eff6ff',
+          600: '#2563eb', // Selective blue for CTAs
+          700: '#1d4ed8',
         },
         emerald: {
-          500: '#10b981',
-          600: '#059669',
+          50: '#f0fdf4',
+          100: '#dcfce7',
+          700: '#15803d', // Restrained emerald for eligible
+          800: '#166534',
+        },
+        amber: {
+          50: '#fffbeb',
+          100: '#fef3c7',
+          700: '#b45309', // Restrained amber
+          800: '#92400e',
         }
       },
       fontFamily: {

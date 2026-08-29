@@ -1,6 +1,6 @@
 import React from 'react';
 import { TaxAnalysis, UserProfile, CompleteAnalysisResponse } from '../types';
-import { TrendingDown, Award, CheckCircle2, ArrowRight, Download, FileText } from 'lucide-react';
+import { Download, ArrowRight } from 'lucide-react';
 
 interface TaxSnapshotProps {
   analysis: TaxAnalysis;
@@ -86,79 +86,71 @@ export const TaxSnapshot: React.FC<TaxSnapshotProps> = ({ analysis, profile, ful
   };
 
   return (
-    <div className="bg-white rounded-2xl border border-slate-200/90 shadow-sm p-6 sm:p-8 space-y-6">
+    <div className="bg-white rounded-xl border border-slate-200 p-6 sm:p-8 space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-100 pb-5">
         <div>
-          <span className="text-xs font-bold text-brand-600 uppercase tracking-wider">Deterministic Tax Summary</span>
-          <h2 className="text-2xl font-bold text-slate-900 mt-0.5">Tax Snapshot for {profile.name || 'User'}</h2>
-          <p className="text-xs text-slate-500 mt-1">FY 2024-25 (AY 2025-26) • Verified Rule Evaluation</p>
+          <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">TAX SNAPSHOT</span>
+          <h2 className="text-2xl font-bold text-slate-900 mt-0.5">Evaluation for {profile.name || 'User'}</h2>
+          <p className="text-xs text-slate-500 mt-1">FY 2024-25 (AY 2025-26) • Configured Rule Engine Analysis</p>
         </div>
 
         <div className="flex flex-wrap items-center gap-2">
-          <div className="inline-flex items-center gap-2 bg-emerald-50 text-emerald-800 border border-emerald-200 px-4 py-2 rounded-xl text-sm font-semibold">
-            <Award className="w-4 h-4 text-emerald-600 shrink-0" />
-            <span>Recommended: {analysis.recommendedRegime}</span>
+          <div className="bg-slate-100 text-slate-900 border border-slate-200 px-3.5 py-1.5 rounded-lg text-xs font-semibold">
+            Recommended: {analysis.recommendedRegime}
           </div>
 
           {fullResponse && (
             <button
               onClick={handleExportTaxReport}
-              className="inline-flex items-center gap-1.5 bg-slate-900 hover:bg-slate-800 text-white font-semibold text-xs px-4 py-2 rounded-xl transition-all shadow-sm"
-              title="Save & Download Complete Tax Report"
+              className="bg-slate-900 hover:bg-slate-800 text-white font-semibold text-xs px-3.5 py-1.5 rounded-lg transition-colors flex items-center gap-1.5"
             >
               <Download className="w-3.5 h-3.5" />
-              Save & Export Tax Report
+              Save Report
             </button>
           )}
         </div>
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="bg-slate-50 rounded-xl p-4 border border-slate-100">
+        <div className="bg-slate-50 rounded-lg p-4 border border-slate-100">
           <span className="text-xs text-slate-500 font-medium">Gross Annual Income</span>
-          <div className="text-2xl font-bold text-slate-900 mt-1">₹{analysis.grossIncome.toLocaleString('en-IN')}</div>
+          <div className="text-xl sm:text-2xl font-bold text-slate-900 mt-1">₹{analysis.grossIncome.toLocaleString('en-IN')}</div>
           <span className="text-[11px] text-slate-400">Total reported earnings</span>
         </div>
 
         <div className="bg-slate-50 rounded-xl p-4 border border-slate-100">
           <span className="text-xs text-slate-500 font-medium">Estimated Taxable Income</span>
-          <div className="text-2xl font-bold text-slate-900 mt-1">₹{recResult.taxableIncome.toLocaleString('en-IN')}</div>
+          <div className="text-xl sm:text-2xl font-bold text-slate-900 mt-1">₹{recResult.taxableIncome.toLocaleString('en-IN')}</div>
           <span className="text-[11px] text-slate-400">Under recommended regime</span>
         </div>
 
         <div className="bg-slate-50 rounded-xl p-4 border border-slate-100">
           <span className="text-xs text-slate-500 font-medium">Estimated Tax Payable</span>
-          <div className="text-2xl font-bold text-brand-600 mt-1">₹{recResult.totalTax.toLocaleString('en-IN')}</div>
+          <div className="text-xl sm:text-2xl font-bold text-slate-900 mt-1">₹{recResult.totalTax.toLocaleString('en-IN')}</div>
           <span className="text-[11px] text-slate-400">Includes 4% Cess & Rebates</span>
         </div>
 
-        <div className="bg-emerald-500/10 rounded-xl p-4 border border-emerald-500/20">
-          <span className="text-xs text-emerald-700 font-medium flex items-center gap-1">
-            <TrendingDown className="w-3.5 h-3.5" />
-            Estimated Tax Savings
-          </span>
-          <div className="text-2xl font-bold text-emerald-700 mt-1">₹{analysis.estimatedSavings.toLocaleString('en-IN')}</div>
-          <span className="text-[11px] text-emerald-600 font-medium">Saved vs alternative regime</span>
+        <div className="bg-emerald-50/80 rounded-xl p-4 border border-emerald-200/80">
+          <span className="text-xs text-emerald-800 font-semibold">Estimated Tax Savings</span>
+          <div className="text-xl sm:text-2xl font-bold text-emerald-700 mt-1">₹{analysis.estimatedSavings.toLocaleString('en-IN')}</div>
+          <span className="text-[11px] text-emerald-800">Savings vs alternative regime</span>
         </div>
       </div>
 
-      <div className="bg-slate-900 text-white rounded-xl p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+      <div className="bg-slate-900 text-white rounded-lg p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div className="space-y-1">
-          <div className="flex items-center gap-2 text-emerald-400 text-xs font-semibold uppercase tracking-wider">
-            <CheckCircle2 className="w-4 h-4" />
-            Regime Comparison & Savings Guidance
-          </div>
-          <p className="text-sm text-slate-300 leading-relaxed max-w-3xl">
+          <span className="text-xs font-semibold uppercase tracking-wider text-slate-400">Regime Comparison Finding</span>
+          <p className="text-xs sm:text-sm text-slate-200 leading-relaxed max-w-3xl">
             {analysis.recommendationReason}
           </p>
         </div>
 
         <button
           onClick={onExploreDeductions}
-          className="shrink-0 bg-brand-600 hover:bg-brand-500 text-white text-xs font-semibold px-4 py-2.5 rounded-lg transition-colors flex items-center gap-2"
+          className="shrink-0 bg-white hover:bg-slate-100 text-slate-900 text-xs font-semibold px-4 py-2 rounded-md transition-colors flex items-center gap-1.5"
         >
-          Explore Deductions
-          <ArrowRight className="w-4 h-4" />
+          View Deductions
+          <ArrowRight className="w-3.5 h-3.5" />
         </button>
       </div>
     </div>
