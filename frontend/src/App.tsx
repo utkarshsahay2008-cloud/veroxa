@@ -36,9 +36,11 @@ export const App: React.FC = () => {
     healthInsuranceSelf: 25000,
     healthInsuranceParents: 25000,
     parentsAge: 62,
+    preventiveHealthCheckup: 5000,
     nps: 50000,
     homeLoanInterest: 150000,
     evLoanInterest: 45000,
+    educationLoanInterest: 30000,
     vehicleExpenses: 0,
     propertyType: 'Self-occupied',
     savingsInterest: 12000,
@@ -100,11 +102,7 @@ export const App: React.FC = () => {
 
       <main className="flex-1">
         {currentTab === 'landing' && (
-          <LandingPage
-            personas={personas}
-            onSelectPersona={handleSelectPersona}
-            onTryDemo={handleTryDemo}
-          />
+          <LandingPage onTryDemo={handleTryDemo} />
         )}
 
         {currentTab === 'profile' && (
@@ -124,7 +122,7 @@ export const App: React.FC = () => {
       </main>
 
       <footer className="bg-white border-t border-slate-200 py-6 text-center text-xs text-slate-500 space-y-1">
-        <p><strong>Veroxa</strong> — Tax Checkup for Middle-Income Households</p>
+        <p><strong>Veroxa</strong> — Tax Guidance for Middle-Income Households</p>
         <p>Configurable Rule Engine Architecture • Synthetic Data Only • Educational Purpose</p>
       </footer>
     </div>
