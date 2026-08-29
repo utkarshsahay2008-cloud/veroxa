@@ -50,7 +50,7 @@ export const SchemeCard: React.FC<SchemeCardProps> = ({ scheme }) => {
             onClick={() => setIsWhyOpen(true)}
             className="w-full bg-slate-100 hover:bg-slate-200 text-slate-900 font-semibold text-xs py-2 px-3 rounded-md transition-colors text-center"
           >
-            Why am I eligible?
+            {scheme.eligible ? 'Why am I eligible? →' : 'Why am I ineligible? →'}
           </button>
         </div>
       </div>
@@ -58,7 +58,7 @@ export const SchemeCard: React.FC<SchemeCardProps> = ({ scheme }) => {
       <WhyModal
         isOpen={isWhyOpen}
         onClose={() => setIsWhyOpen(false)}
-        title={`Scheme Eligibility — ${scheme.schemeId}`}
+        title={scheme.eligible ? `Why am I eligible for ${scheme.schemeName}?` : `Why am I ineligible for ${scheme.schemeName}?`}
         scheme={scheme}
       />
     </>

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { X, Check, AlertCircle, ExternalLink } from 'lucide-react';
+import { X, Check, AlertCircle } from 'lucide-react';
 import { DeductionResult, SchemeResult } from '../types';
 
 interface WhyModalProps {
@@ -23,7 +23,7 @@ export const WhyModal: React.FC<WhyModalProps> = ({ isOpen, onClose, title, dedu
       >
         <div className="flex items-center justify-between border-b border-slate-100 pb-3">
           <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500 bg-slate-100 px-2 py-0.5 rounded">
-            WHY THIS APPEARED
+            {scheme ? (scheme.eligible ? 'WHY YOU QUALIFY' : 'WHY INELIGIBLE') : 'WHY THIS APPEARED'}
           </span>
           <button
             onClick={onClose}
@@ -33,57 +33,85 @@ export const WhyModal: React.FC<WhyModalProps> = ({ isOpen, onClose, title, dedu
           </button>
         </div>
 
+        {/* 1. DEDUCTION EXPLANATION */}
         {deduction && (
           <div className="space-y-4 text-xs">
-            {/* Human Explanation First */}
-            <div className="bg-emerald-50/80 border border-emerald-200 rounded-lg p-4 text-emerald-900 space-y-1">
-              <span className="font-bold text-[11px] uppercase tracking-wider block text-emerald-800">IN SIMPLE TERMS</span>
+            {/* Brief 1-Sentence Human Summary */}
+            <div className={`p-4 rounded-lg border space-y-1 ${
+              deduction.eligible 
+                ? 'bg-emerald-50/80 border-emerald-200 text-emerald-900' 
+                : 'bg-slate-50 border-slate-200 text-slate-700'
+            }`}>
+              <span className="font-bold text-[11px] uppercase tracking-wider block">IN BRIEF</span>
               <p className="text-xs font-medium leading-relaxed">
                 {deduction.eligible 
-                  ? `Your reported ${deduction.name.toLowerCase()} payment may qualify for a tax deduction under the configured rule.`
-                  : `This deduction requirement is currently unmet based on your reported household information.`}
+                  ? `Your reported ${deduction.name.toLowerCase()} payment of ₹${deduction.inputValue.toLocaleString('en-IN')} qualifies for up to ₹${deduction.potentialDeduction.toLocaleString('en-IN')} tax deduction under Section ${deduction.ruleId}.`
+                  : `You currently do not receive a deduction for Section ${deduction.ruleId} because no eligible expenses were reported in your profile.`}
               </p>
             </div>
 
-            {/* Simple Breakdown Table */}
-            <div className="bg-slate-50 p-4 rounded-lg border border-slate-200 space-y-2.5">
+            {/* Structured Financial Breakdown */}
+            <div className="bg-slate-50 p-4 rounded-lg border border-slate-200 space-y-2">
               <div className="flex justify-between py-1 border-b border-slate-200/60">
                 <span className="text-slate-500">You reported</span>
                 <span className="font-bold text-slate-900">₹{deduction.inputValue.toLocaleString('en-IN')}</span>
               </div>
 
               <div className="flex justify-between py-1 border-b border-slate-200/60">
-                <span className="text-slate-500">Relevant rule</span>
+                <span className="text-slate-500">Relevant tax rule</span>
                 <span className="font-bold text-slate-900">Section {deduction.ruleId}</span>
               </div>
 
               <div className="flex justify-between py-1 border-b border-slate-200/60">
-                <span className="text-slate-500">Maximum considered under rule</span>
+                <span className="text-slate-500">Maximum limit under rule</span>
                 <span className="font-bold text-slate-900">₹{deduction.maximumAllowed.toLocaleString('en-IN')}</span>
               </div>
 
               <div className="flex justify-between pt-1 font-bold">
-                <span className="text-slate-800">Potentially applicable</span>
+                <span className="text-slate-800">Allowed deduction</span>
                 <span className="text-emerald-800 text-sm">₹{deduction.potentialDeduction.toLocaleString('en-IN')}</span>
               </div>
             </div>
 
-            {/* Optional Technical Reference Toggle */}
+            {/* Conditions Passed / Unmet */}
+            <div className="space-y-2">
+              <span className="font-bold text-slate-900 uppercase tracking-wider text-[10px]">Condition Checklist</span>
+
+              {deduction.passedConditions.length > 0 && (
+                <div className="space-y-1">
+                  {deduction.passedConditions.map((cond, idx) => (
+                    <div key={idx} className="bg-emerald-50 text-emerald-900 p-2 rounded border border-emerald-200 flex items-start gap-2 text-[11px]">
+                      <Check className="w-3.5 h-3.5 text-emerald-700 shrink-0 mt-0.5" />
+                      <span>{cond}</span>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {deduction.failedConditions.length > 0 && (
+                <div className="space-y-1">
+                  {deduction.failedConditions.map((cond, idx) => (
+                    <div key={idx} className="bg-slate-100 text-slate-700 p-2 rounded border border-slate-200 flex items-start gap-2 text-[11px]">
+                      <AlertCircle className="w-3.5 h-3.5 text-slate-500 shrink-0 mt-0.5" />
+                      <span>{cond}</span>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* Technical Rule Reference Toggle */}
             <div className="pt-1">
               <button
                 onClick={() => setShowTechnical(!showTechnical)}
                 className="text-[11px] font-semibold text-slate-700 hover:text-slate-900 flex items-center gap-1 hover:underline"
               >
-                {showTechnical ? 'Hide technical rule reference' : 'View technical rule reference →'}
+                {showTechnical ? 'Hide technical reference' : 'View technical reference →'}
               </button>
 
               {showTechnical && (
                 <div className="mt-3 bg-slate-900 text-slate-200 p-3.5 rounded-lg text-[11px] space-y-2 font-mono">
                   <div className="text-amber-300">// {deduction.source} ({deduction.effectiveYear})</div>
-                  <div>Passed: {deduction.passedConditions.join(', ') || 'None'}</div>
-                  {deduction.failedConditions.length > 0 && (
-                    <div className="text-slate-400">Failed: {deduction.failedConditions.join(', ')}</div>
-                  )}
                   <p className="font-sans text-xs text-slate-300 pt-1 border-t border-slate-800">{deduction.explanation}</p>
                 </div>
               )}
@@ -91,28 +119,80 @@ export const WhyModal: React.FC<WhyModalProps> = ({ isOpen, onClose, title, dedu
           </div>
         )}
 
+        {/* 2. GOVERNMENT SCHEME EXPLANATION */}
         {scheme && (
           <div className="space-y-4 text-xs">
+            {/* Brief 1-Sentence Takeaway */}
+            <div className={`p-4 rounded-lg border space-y-1 ${
+              scheme.eligible 
+                ? 'bg-emerald-50/80 border-emerald-200 text-emerald-900' 
+                : 'bg-amber-50/80 border-amber-200 text-amber-900'
+            }`}>
+              <span className="font-bold text-[11px] uppercase tracking-wider block">IN BRIEF</span>
+              <p className="text-xs font-medium leading-relaxed">
+                {scheme.eligible
+                  ? `You are potentially eligible for ${scheme.schemeName} based on your age and household profile.`
+                  : `You are currently ineligible for ${scheme.schemeName} because key criteria (such as minimum age or dependents) were not satisfied in your profile.`}
+              </p>
+            </div>
+
+            {/* Scheme Summary Panel */}
             <div className="bg-slate-50 p-4 rounded-lg border border-slate-200 space-y-2">
-              <div className="flex justify-between">
-                <span className="text-slate-500">Scheme ID</span>
-                <span className="font-bold text-slate-900">{scheme.schemeId}</span>
+              <div className="flex justify-between py-1 border-b border-slate-200/60">
+                <span className="text-slate-500">Scheme name</span>
+                <span className="font-bold text-slate-900">{scheme.schemeName}</span>
               </div>
-              <div className="flex justify-between">
+
+              <div className="flex justify-between py-1 border-b border-slate-200/60">
                 <span className="text-slate-500">Category</span>
                 <span className="font-bold text-slate-900">{scheme.category}</span>
               </div>
-              <div className="flex justify-between border-t border-slate-200 pt-2 font-bold">
-                <span>Eligibility Status</span>
-                <span className={scheme.eligible ? 'text-emerald-800' : 'text-slate-600'}>
+
+              <div className="flex justify-between py-1 border-b border-slate-200/60">
+                <span className="text-slate-500">Key benefit</span>
+                <span className="font-semibold text-slate-800">{scheme.benefit}</span>
+              </div>
+
+              <div className="flex justify-between pt-1 font-bold">
+                <span className="text-slate-800">Status</span>
+                <span className={scheme.eligible ? 'text-emerald-800' : 'text-amber-800'}>
                   {scheme.eligible ? 'Potentially Eligible' : 'Ineligible'}
                 </span>
               </div>
             </div>
 
-            <div className="bg-slate-50 p-3 rounded-lg border border-slate-200 text-slate-600 leading-relaxed">
-              <strong className="block text-slate-900 font-semibold mb-1">Key Benefit & Source:</strong>
-              {scheme.benefit} — {scheme.source} ({scheme.effectiveYear})
+            {/* Condition Checklist (Why Passed / Why Failed) */}
+            <div className="space-y-2">
+              <span className="font-bold text-slate-900 uppercase tracking-wider text-[10px]">Eligibility Criteria Checked</span>
+
+              {scheme.passedConditions.length > 0 && (
+                <div className="space-y-1">
+                  <span className="font-semibold text-emerald-800 text-[11px]">Satisfied Criteria:</span>
+                  {scheme.passedConditions.map((cond, idx) => (
+                    <div key={idx} className="bg-emerald-50 text-emerald-900 p-2 rounded border border-emerald-200 flex items-start gap-2 text-[11px]">
+                      <Check className="w-3.5 h-3.5 text-emerald-700 shrink-0 mt-0.5" />
+                      <span>{cond}</span>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {scheme.failedConditions.length > 0 && (
+                <div className="space-y-1">
+                  <span className="font-semibold text-amber-800 text-[11px]">Unmet Criteria:</span>
+                  {scheme.failedConditions.map((cond, idx) => (
+                    <div key={idx} className="bg-amber-50 text-amber-900 p-2 rounded border border-amber-200 flex items-start gap-2 text-[11px]">
+                      <AlertCircle className="w-3.5 h-3.5 text-amber-700 shrink-0 mt-0.5" />
+                      <span>{cond}</span>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* Legal Source */}
+            <div className="text-[11px] text-slate-500 border-t border-slate-100 pt-2">
+              Official Reference: <strong>{scheme.source} ({scheme.effectiveYear})</strong>
             </div>
           </div>
         )}
