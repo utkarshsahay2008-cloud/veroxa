@@ -23,6 +23,8 @@ export interface UserProfile {
   parentsAge: number | null;
   nps: number;
   homeLoanInterest: number;
+  evLoanInterest?: number;
+  vehicleExpenses?: number;
   propertyType?: string;
   savingsInterest: number;
   hasGirlChild: boolean;

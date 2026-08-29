@@ -1,5 +1,5 @@
 import { UserProfile, DeductionResult } from '../types';
-import { loadDeductionRules, DeductionRuleConfig } from '../utils/configLoader';
+import { loadDeductionRules } from '../utils/configLoader';
 
 export function evaluateDeductions(profile: UserProfile): { deductions: DeductionResult[]; totalDeductionAmount: number } {
   const rules = loadDeductionRules();
@@ -73,6 +73,33 @@ export function evaluateDeductions(profile: UserProfile): { deductions: Deductio
         passedConditions.push(`Paid ₹${inputValue.toLocaleString('en-IN')} interest on home loan for self-occupied property`);
       } else {
         failedConditions.push('No home loan interest payments reported');
+      }
+
+    } else if (rule.ruleId === '80EEB') {
+      inputValue = profile.evLoanInterest || 0;
+      potentialDeduction = Math.min(inputValue, rule.maximumAllowed);
+
+      if (inputValue > 0) {
+        passedConditions.push(`Paid ₹${inputValue.toLocaleString('en-IN')} interest on Electric Vehicle (EV) loan under Section 80EEB`);
+      } else {
+        failedConditions.push('No electric vehicle (EV) loan interest reported');
+      }
+
+    } else if (rule.ruleId === 'VEHICLE_BIZ') {
+      inputValue = profile.vehicleExpenses || 0;
+      const isBusiness = profile.occupation === 'self-employed' || profile.occupation === 'freelancer';
+
+      if (isBusiness && inputValue > 0) {
+        passedConditions.push(`Occupation is ${profile.occupation} — vehicle running costs & depreciation eligible under Sec 32/37`);
+        potentialDeduction = Math.min(inputValue, rule.maximumAllowed);
+      } else {
+        if (!isBusiness) {
+          failedConditions.push(`Salaried employees receive standard conveyance allowance; direct vehicle depreciation applies to business/freelance income.`);
+        }
+        if (inputValue === 0) {
+          failedConditions.push('No business vehicle expenses or depreciation reported');
+        }
+        potentialDeduction = 0;
       }
 
     } else if (rule.ruleId === '80GG') {

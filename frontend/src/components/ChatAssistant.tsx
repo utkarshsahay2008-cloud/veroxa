@@ -17,7 +17,7 @@ export const ChatAssistant: React.FC<ChatAssistantProps> = ({ analysisContext })
   const [messages, setMessages] = useState<Message[]>([
     {
       sender: 'bot',
-      text: `Hello. Ask me any question about your tax estimate, regime selection, Chapter VI-A deductions, or government schemes. All answers are derived directly from your verified rule-engine results.`,
+      text: `Hello. Ask me any simple or complex tax question about your vehicle (EV loan Sec 80EEB / business depreciation), home loan interest, regime selection, Chapter VI-A deductions, or government schemes. All answers are derived directly from your verified rule-engine results.`,
       timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
     }
   ]);
@@ -26,10 +26,10 @@ export const ChatAssistant: React.FC<ChatAssistantProps> = ({ analysisContext })
   const chatEndRef = useRef<HTMLDivElement>(null);
 
   const samplePrompts = [
-    'Why was the Old Tax Regime recommended?',
-    'How was my Section 80C deduction calculated?',
-    'Which expenses helped reduce my tax liability?',
-    'Why am I eligible for the NPS scheme?'
+    'What tax benefits apply to my vehicle / EV loan?',
+    'How does Section 80EEB work for electric vehicle loans?',
+    'Can I claim car depreciation or fuel expenses?',
+    'Why is Old Regime better for my home & EV loans?'
   ];
 
   useEffect(() => {
@@ -78,7 +78,7 @@ export const ChatAssistant: React.FC<ChatAssistantProps> = ({ analysisContext })
       <div className="p-4 border-b border-slate-200 flex items-center justify-between bg-slate-50 rounded-t-xl">
         <div>
           <h3 className="font-bold text-sm text-slate-900">Ask Veroxa</h3>
-          <p className="text-[11px] text-slate-500">Answers anchored strictly in verified rule-engine analysis</p>
+          <p className="text-[11px] text-slate-500">Comprehensive responses anchored in verified rule-engine analysis</p>
         </div>
 
         <button
@@ -108,7 +108,7 @@ export const ChatAssistant: React.FC<ChatAssistantProps> = ({ analysisContext })
             <div className={`rounded-lg p-3.5 text-xs sm:text-sm leading-relaxed space-y-1 ${
               msg.sender === 'user'
                 ? 'bg-slate-900 text-white'
-                : 'bg-white text-slate-900 border border-slate-200'
+                : 'bg-white text-slate-900 border border-slate-200 shadow-xs'
             }`}>
               <div className="whitespace-pre-wrap">{msg.text}</div>
               <span className={`text-[10px] block text-right pt-1 ${
@@ -126,7 +126,7 @@ export const ChatAssistant: React.FC<ChatAssistantProps> = ({ analysisContext })
               V
             </div>
             <div className="bg-white border border-slate-200 p-3.5 rounded-lg text-xs text-slate-500">
-              Generating plain-language explanation from rule engine context...
+              Analyzing rule engine context and preparing comprehensive tax response...
             </div>
           </div>
         )}
@@ -156,7 +156,7 @@ export const ChatAssistant: React.FC<ChatAssistantProps> = ({ analysisContext })
           type="text"
           value={input}
           onChange={(e) => setInput(e.target.value)}
-          placeholder="Ask a question about your tax results..."
+          placeholder="Ask a question about vehicle tax, EV loans, depreciation, or regime comparison..."
           className="flex-1 bg-slate-50 border border-slate-200 rounded-md px-3.5 py-2 text-xs text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-1 focus:ring-slate-400"
         />
         <button

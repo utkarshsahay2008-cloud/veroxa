@@ -90,6 +90,48 @@
     "explanationTemplate": "Interest paid on home loan for self-occupied property is deductible up to ₹2,00,000 under Section 24(b). You paid ₹{inputValue}, giving a deduction of ₹{potentialDeduction}."
   },
   {
+    "ruleId": "80EEB",
+    "name": "Section 80EEB — Electric Vehicle (EV) Loan Interest",
+    "version": "1.0",
+    "applicableRegime": "Old Tax Regime",
+    "category": "Vehicle & Transport",
+    "maximumAllowed": 150000,
+    "requiredInputFields": ["evLoanInterest"],
+    "description": "Deduction for interest paid on loan taken for purchasing an Electric Vehicle (EV) for personal or family use.",
+    "source": "Income Tax Act 1961 - Section 80EEB",
+    "effectiveYear": "FY 2024-25",
+    "conditions": [
+      {
+        "field": "evLoanInterest",
+        "operator": ">",
+        "value": 0,
+        "description": "User paid interest on a loan sanctioned for purchasing an Electric Vehicle (EV)."
+      }
+    ],
+    "explanationTemplate": "Under Section 80EEB, interest paid on electric vehicle (EV) loans is deductible up to ₹1,50,000 under the Old Tax Regime. You reported ₹{inputValue}, granting a deduction of ₹{potentialDeduction}."
+  },
+  {
+    "ruleId": "VEHICLE_BIZ",
+    "name": "Vehicle Expenses & Depreciation (Business / Self-Employed)",
+    "version": "1.0",
+    "applicableRegime": "Both Regimes (Business / Professional Income)",
+    "category": "Vehicle & Transport",
+    "maximumAllowed": 300000,
+    "requiredInputFields": ["vehicleExpenses", "occupation"],
+    "description": "Tax deduction for vehicle depreciation (15% rate), fuel, maintenance, and driver salary used for business or freelance purposes.",
+    "source": "Income Tax Act 1961 - Section 32 & Section 37",
+    "effectiveYear": "FY 2024-25",
+    "conditions": [
+      {
+        "field": "vehicleExpenses",
+        "operator": ">",
+        "value": 0,
+        "description": "User incurred vehicle fuel, maintenance, or depreciation expenses for business/freelance work."
+      }
+    ],
+    "explanationTemplate": "Under Section 32 & 37, vehicle running costs (fuel, insurance, repair) and 15% annual depreciation are valid business deductions for self-employed/freelancers. Reported: ₹{inputValue}, Allowed: ₹{potentialDeduction}."
+  },
+  {
     "ruleId": "80GG",
     "name": "Section 80GG — House Rent Paid (No HRA received)",
     "version": "1.0",
