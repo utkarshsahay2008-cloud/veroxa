@@ -5,6 +5,11 @@ export interface UserProfile {
   residency?: string;
   occupation: string;
   annualIncome: number;
+  maritalStatus?: 'Single' | 'Married';
+  numberOfChildren?: number;
+  supportingParents?: boolean;
+  hasHomeLoan?: boolean;
+  lifeEvents?: string[];
   rent: number;
   hraReceived: number;
   lifeInsurance: number;
