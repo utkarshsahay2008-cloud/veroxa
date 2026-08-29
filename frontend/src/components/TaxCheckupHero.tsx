@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { CompleteAnalysisResponse } from '../types';
-import { ChevronDown, ChevronUp, Check, Download } from 'lucide-react';
+import { Check, AlertCircle, ArrowRight, Info, Download } from 'lucide-react';
 
 interface TaxCheckupHeroProps {
   analysis: CompleteAnalysisResponse;
@@ -8,12 +8,11 @@ interface TaxCheckupHeroProps {
 }
 
 export const TaxCheckupHero: React.FC<TaxCheckupHeroProps> = ({ analysis, onSeeWhy }) => {
-  const [showCalculation, setShowCalculation] = useState(false);
-
+  const isOldRecommended = analysis.taxAnalysis.recommendedRegime === 'Old Tax Regime';
   const oldR = analysis.taxAnalysis.oldRegime;
   const newR = analysis.taxAnalysis.newRegime;
-  const isOldWinner = analysis.taxAnalysis.recommendedRegime === 'Old Tax Regime';
   const diff = Math.abs(oldR.totalTax - newR.totalTax);
+  const eligibleDeductions = analysis.deductions.filter(d => d.eligible);
 
   const handleExportReport = () => {
     const reportLines = [
@@ -51,123 +50,101 @@ export const TaxCheckupHero: React.FC<TaxCheckupHeroProps> = ({ analysis, onSeeW
 
   return (
     <div className="space-y-6">
-      {/* Page Heading per Master Prompt Section 2 */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-200 pb-4">
-        <div>
-          <h1 className="text-3xl font-extrabold text-slate-900 tracking-tight">Your tax checkup</h1>
-          <p className="text-sm text-slate-600 mt-1">See what may matter for your household before you file.</p>
-        </div>
+      {/* Top Right Winner Panel per Images 2 & 3 */}
+      <div className="bg-emerald-50/70 rounded-xl border border-emerald-200 p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+        <div className="space-y-1.5">
+          <span className="text-[10px] font-bold uppercase tracking-wider text-emerald-800 bg-emerald-100 px-2.5 py-0.5 rounded">
+            Recommended for your situation
+          </span>
 
-        <button
-          onClick={handleExportReport}
-          className="shrink-0 bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 text-xs font-semibold px-3.5 py-2 rounded-md transition-colors flex items-center gap-1.5"
-        >
-          <Download className="w-3.5 h-3.5" />
-          Save report
-        </button>
-      </div>
+          <h3 className="text-xl font-bold text-slate-900">
+            {isOldRecommended ? 'Old Tax Regime appears better' : 'New Tax Regime appears better'}
+          </h3>
 
-      {/* Main Result Focal Point per Master Prompt Section 6 */}
-      <div className="bg-white rounded-xl border border-slate-200 p-6 sm:p-8 space-y-6">
-        <div className="flex items-center justify-between">
-          <h2 className="text-lg font-bold text-slate-900">Which option looks better for you?</h2>
-          <button
-            onClick={() => setShowCalculation(!showCalculation)}
-            className="text-xs font-semibold text-slate-700 hover:text-slate-900 bg-slate-100 hover:bg-slate-200 border border-slate-200 px-3 py-1.5 rounded-md transition-colors flex items-center gap-1"
-          >
-            {showCalculation ? 'Hide calculation' : 'See calculation'}
-            {showCalculation ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
-          </button>
-        </div>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div className={`rounded-xl p-5 border transition-all ${
-            isOldWinner ? 'border-slate-900 bg-slate-50/80 ring-1 ring-slate-900/10' : 'border-slate-200 bg-white'
-          }`}>
-            <div className="text-xs font-bold uppercase tracking-wider text-slate-500">OLD TAX REGIME</div>
-            <div className="text-3xl font-extrabold text-slate-900 mt-2">₹{oldR.totalTax.toLocaleString('en-IN')}</div>
-            <span className="text-xs text-slate-500 block mt-1">Estimated tax payable</span>
+          <div className="flex items-baseline gap-2">
+            <span className="text-slate-600 text-xs font-medium">Potential difference</span>
+            <span className="text-lg font-extrabold text-emerald-700">₹{diff.toLocaleString('en-IN')} lower tax</span>
           </div>
 
-          <div className={`rounded-xl p-5 border transition-all ${
-            !isOldWinner ? 'border-slate-900 bg-slate-50/80 ring-1 ring-slate-900/10' : 'border-slate-200 bg-white'
-          }`}>
-            <div className="text-xs font-bold uppercase tracking-wider text-slate-500">NEW TAX REGIME</div>
-            <div className="text-3xl font-extrabold text-slate-900 mt-2">₹{newR.totalTax.toLocaleString('en-IN')}</div>
-            <span className="text-xs text-slate-500 block mt-1">Estimated tax payable</span>
-          </div>
+          <p className="text-xs text-slate-600 max-w-xl leading-relaxed">
+            Your reported deductions (health insurance, home loan, PPF) reduce your taxable income below the New Regime threshold.
+          </p>
         </div>
 
-        {/* Conclusion Banner */}
-        <div className="bg-emerald-50/90 border border-emerald-200 rounded-lg p-4 text-xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-          <div className="space-y-0.5">
-            <span className="font-bold text-emerald-900 uppercase tracking-wider text-[11px] block">
-              {isOldWinner ? 'OLD REGIME APPEARS BETTER' : 'NEW REGIME APPEARS BETTER'}
-            </span>
-            <p className="text-emerald-800 font-medium">
-              Potential difference: <strong className="font-bold">₹{diff.toLocaleString('en-IN')} lower</strong> based on your reported household deductions.
-            </p>
-          </div>
-
-          <button
-            onClick={onSeeWhy}
-            className="shrink-0 bg-slate-900 hover:bg-slate-800 text-white font-semibold text-xs px-4 py-2 rounded-md transition-colors"
-          >
-            Why?
-          </button>
-        </div>
-
-        {/* Hidden Calculation Details */}
-        {showCalculation && (
-          <div className="border-t border-slate-200 pt-6 space-y-4 text-xs">
-            <h3 className="font-bold text-slate-900 uppercase tracking-wider text-[11px]">Slab Breakdown Details</h3>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div className="bg-slate-50 p-4 rounded-lg border border-slate-200 space-y-2">
-                <div className="font-semibold text-slate-900">Old Regime Slabs</div>
-                <table className="w-full text-left border-collapse text-[11px]">
-                  <thead>
-                    <tr className="border-b border-slate-200 text-slate-500">
-                      <th className="py-1">Slab</th>
-                      <th className="py-1">Rate</th>
-                      <th className="py-1 text-right">Tax</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {oldR.slabBreakdown.map((s, idx) => (
-                      <tr key={idx} className="border-b border-slate-100">
-                        <td className="py-1">{s.slab}</td>
-                        <td className="py-1">{s.rate}%</td>
-                        <td className="py-1 text-right font-mono">₹{s.taxAmount.toLocaleString('en-IN')}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-
-              <div className="bg-slate-50 p-4 rounded-lg border border-slate-200 space-y-2">
-                <div className="font-semibold text-slate-900">New Regime Slabs</div>
-                <table className="w-full text-left border-collapse text-[11px]">
-                  <thead>
-                    <tr className="border-b border-slate-200 text-slate-500">
-                      <th className="py-1">Slab</th>
-                      <th className="py-1">Rate</th>
-                      <th className="py-1 text-right">Tax</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {newR.slabBreakdown.map((s, idx) => (
-                      <tr key={idx} className="border-b border-slate-100">
-                        <td className="py-1">{s.slab}</td>
-                        <td className="py-1">{s.rate}%</td>
-                        <td className="py-1 text-right font-mono">₹{s.taxAmount.toLocaleString('en-IN')}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
+        <div className="flex flex-col items-end gap-3 shrink-0">
+          {/* Visual Comparison Bar Indicator per Images 2 & 3 */}
+          <div className="flex items-end gap-1.5 h-12">
+            <div className="flex flex-col items-center">
+              <div className="w-5 bg-emerald-600 rounded-t" style={{ height: isOldRecommended ? '40px' : '48px' }} />
+              <span className="text-[9px] font-semibold text-slate-600 mt-1">Old</span>
+            </div>
+            <div className="flex flex-col items-center">
+              <div className="w-5 bg-slate-300 rounded-t" style={{ height: !isOldRecommended ? '40px' : '48px' }} />
+              <span className="text-[9px] font-semibold text-slate-600 mt-1">New</span>
             </div>
           </div>
-        )}
+
+          <div className="flex items-center gap-2">
+            <button
+              onClick={handleExportReport}
+              className="bg-white hover:bg-slate-100 text-slate-700 border border-slate-200 text-xs font-semibold px-3 py-1.5 rounded-md transition-colors flex items-center gap-1"
+            >
+              <Download className="w-3 h-3" /> Save
+            </button>
+
+            <button
+              onClick={onSeeWhy}
+              className="bg-slate-900 hover:bg-slate-800 text-white font-semibold text-xs px-4 py-1.5 rounded-md transition-colors flex items-center gap-1"
+            >
+              See why <ArrowRight className="w-3.5 h-3.5" />
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* Veroxa Tax Checkup Status Grid per Images 2 & 3 */}
+      <div className="bg-white rounded-xl border border-slate-200 p-5 space-y-3">
+        <div className="flex items-center justify-between border-b border-slate-100 pb-2">
+          <div>
+            <h3 className="font-bold text-slate-900 text-sm">Veroxa Tax Checkup</h3>
+            <p className="text-[11px] text-slate-500">Here's what matters for your household before you file.</p>
+          </div>
+          <span className="text-[10px] text-slate-400 font-medium">Updated just now</span>
+        </div>
+
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
+          <div className="bg-emerald-50/50 p-3 rounded-lg border border-emerald-100 flex items-center justify-between">
+            <div>
+              <span className="text-[11px] text-slate-500 font-medium block">Tax position</span>
+              <span className="font-bold text-slate-900">Reviewed</span>
+            </div>
+            <Check className="w-4 h-4 text-emerald-600" />
+          </div>
+
+          <div className="bg-amber-50/50 p-3 rounded-lg border border-amber-100 flex items-center justify-between">
+            <div>
+              <span className="text-[11px] text-amber-800 font-medium block">Potential opportunities</span>
+              <span className="font-bold text-amber-900">{eligibleDeductions.length} worth checking</span>
+            </div>
+            <AlertCircle className="w-4 h-4 text-amber-600" />
+          </div>
+
+          <div className="bg-slate-50 p-3 rounded-lg border border-slate-100 flex items-center justify-between">
+            <div>
+              <span className="text-[11px] text-slate-500 font-medium block">Documents</span>
+              <span className="font-bold text-slate-900">2 worth checking</span>
+            </div>
+            <AlertCircle className="w-4 h-4 text-slate-400" />
+          </div>
+
+          <div className="bg-slate-50 p-3 rounded-lg border border-slate-100 flex items-center justify-between">
+            <div>
+              <span className="text-[11px] text-slate-500 font-medium block">Information gaps</span>
+              <span className="font-bold text-slate-900">1 item</span>
+            </div>
+            <Info className="w-4 h-4 text-slate-400" />
+          </div>
+        </div>
       </div>
     </div>
   );

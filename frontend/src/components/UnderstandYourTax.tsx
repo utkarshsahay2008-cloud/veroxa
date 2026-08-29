@@ -1,88 +1,88 @@
 import React, { useState } from 'react';
-import { ChevronDown, ChevronUp, BookOpen } from 'lucide-react';
+import { Plus, Minus, ArrowRight } from 'lucide-react';
 
-export const UnderstandYourTax: React.FC = () => {
-  const [openTopic, setOpenTopic] = useState<number | null>(0);
+interface UnderstandYourTaxProps {
+  onAskVeroxa?: () => void;
+}
 
-  const topics = [
+export const UnderstandYourTax: React.FC<UnderstandYourTaxProps> = ({ onAskVeroxa }) => {
+  const [openIndex, setOpenIndex] = useState<number | null>(0);
+
+  const faqs = [
     {
-      title: 'Why was this tax regime recommended for me?',
-      summary: 'Veroxa compares your total tax payable under both Old and New Tax Regimes using your reported household deductions.',
-      content: `The recommendation is calculated by comparing your final tax payable under both regimes. Under the New Tax Regime, you receive a flat ₹75,000 standard deduction but cannot claim Chapter VI-A deductions (like 80C, 80D, or home loan interest). Under the Old Tax Regime, if your total claimed deductions exceed the tax slab differences, the Old Regime results in a lower tax bill.`
+      question: 'Why was the Old Tax Regime recommended for my household?',
+      answer: 'Veroxa compares your total tax payable under both Old and New Tax Regimes using your reported household deductions. Under the Old Regime, deductions like Section 80C (₹1.5L), Section 80D (health insurance), and Section 24(b) (home loan interest) reduce your taxable income significantly compared to the New Regime standard deduction of ₹75,000.'
     },
     {
-      title: 'How was my tax calculated step-by-step?',
-      summary: 'Your gross annual income is reduced by standard deduction and eligible Chapter VI-A deductions to arrive at net taxable income.',
-      content: `First, your gross income is calculated from your reported annual earnings. Next, standard deduction and verified deductions (such as PPF, life insurance, health insurance, and home loan interest) are subtracted. Finally, official income tax slab rates (5%, 20%, 30%) and 4% Health & Education Cess are applied to determine your final tax payable.`
+      question: 'How was my tax calculation performed?',
+      answer: 'Your gross annual income is reduced by eligible Chapter VI-A deductions and standard deductions to arrive at your net taxable income. Standard slab rates (5%, 20%, 30%) and 4% Health & Education Cess are then applied deterministically based on official Income Tax Act rules.'
     },
     {
-      title: 'What is the main difference between Old and New Tax Regimes?',
-      summary: 'The New Regime features lower tax rates with fewer deductions, while the Old Regime allows extensive deductions with higher slab rates.',
-      content: `The New Tax Regime was introduced with simplified lower slab rates, making it attractive for individuals with minimal investments or rent expenses. The Old Tax Regime allows extensive deductions under Section 80C (up to ₹1.5L), Section 80D (health insurance up to ₹75k), Section 24(b) (home loan interest up to ₹2L), and HRA exemption, which often benefits middle-class households with ongoing investments or loans.`
+      question: 'What is the main difference between Old and New Tax Regimes?',
+      answer: 'The New Tax Regime features lower slab rates but permits no Chapter VI-A deductions (except ₹75,000 standard deduction). The Old Tax Regime has slightly higher slab rates but allows extensive deductions for home loans, medical insurance, PPF, NPS, and school tuition fees.'
     },
     {
-      title: 'What happens if some of my household information is missing?',
-      summary: 'Unreported expenses or investments simply result in ₹0 deduction, which may overestimate your tax payable under the Old Regime.',
-      content: `If you omit health insurance premiums, home loan interest, or retirement contributions from your profile, Veroxa treats those inputs as ₹0. This ensures calculations remain strictly grounded in verified facts. You can click "Edit profile" anytime to add missing details and see updated tax checkup results.`
+      question: 'What happens if some of my financial information is missing?',
+      answer: 'Unreported expenses or investments simply result in ₹0 deduction for those specific rules. This ensures calculations remain strictly grounded in verified facts. You can click "Edit profile" anytime to update missing details and see updated tax checkup results.'
     },
     {
-      title: 'How does Section 80D health insurance deduction work?',
-      summary: 'Allows up to ₹25,000 for self/family (₹50,000 if senior citizen) plus up to ₹25,000/₹50,000 for parents.',
-      content: `Section 80D permits tax deductions for medical insurance premiums paid for yourself, your spouse, and dependent children up to ₹25,000 (or ₹50,000 if age 60+). An additional separate deduction up to ₹25,000 (or ₹50,000 if senior citizen) is available for health insurance premiums paid for your parents. Preventive health checkups up to ₹5,000 are also covered within these limits.`
+      question: 'How does Section 80D medical insurance deduction work?',
+      answer: 'Section 80D allows up to ₹25,000 deduction for medical insurance paid for self/family (₹50,000 if senior citizen) plus an additional ₹25,000/₹50,000 for parents. Preventive health checkups up to ₹5,000 are also covered within these statutory limits.'
     }
   ];
 
-  const toggleTopic = (idx: number) => {
-    setOpenTopic(openTopic === idx ? null : idx);
+  const toggle = (idx: number) => {
+    setOpenIndex(openIndex === idx ? null : idx);
   };
 
   return (
-    <div className="bg-white rounded-xl border border-slate-200 p-6 sm:p-8 space-y-6">
-      <div className="space-y-1 border-b border-slate-100 pb-4">
-        <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500 bg-slate-100 px-2.5 py-0.5 rounded">
-          TAX EDUCATION
-        </span>
-        <h2 className="text-xl sm:text-2xl font-bold text-slate-900 mt-1 flex items-center gap-2">
-          <BookOpen className="w-5 h-5 text-slate-700" />
-          Understand your tax
+    <section className="space-y-8 text-center max-w-3xl mx-auto py-6">
+      {/* Title & Subtitle per Image 1 */}
+      <div className="space-y-2">
+        <h2 className="text-3xl sm:text-4xl font-serif text-slate-900 tracking-tight">
+          Clear answers.
         </h2>
-        <p className="text-xs text-slate-600">
-          Simple, plain-language explanations of how tax rules apply to your household.
+        <p className="text-xs sm:text-sm text-slate-500 max-w-xl mx-auto leading-relaxed">
+          Simple, plain-language explanations of how your taxes work under configured rules.
         </p>
       </div>
 
-      <div className="space-y-3">
-        {topics.map((topic, idx) => {
-          const isOpen = openTopic === idx;
+      {/* Accordion Container per Image 1 */}
+      <div className="bg-white rounded-2xl border border-slate-200 shadow-sm text-left divide-y divide-slate-100 overflow-hidden">
+        {faqs.map((faq, idx) => {
+          const isOpen = openIndex === idx;
           return (
-            <div
-              key={idx}
-              className={`rounded-lg border transition-all ${
-                isOpen ? 'bg-slate-50 border-slate-300' : 'bg-white border-slate-200 hover:border-slate-300'
-              }`}
-            >
+            <div key={idx} className="transition-colors">
               <button
-                onClick={() => toggleTopic(idx)}
-                className="w-full text-left p-4 flex items-center justify-between gap-3 text-xs sm:text-sm font-bold text-slate-900"
+                onClick={() => toggle(idx)}
+                className="w-full p-5 sm:p-6 flex items-center justify-between gap-4 text-xs sm:text-sm font-semibold text-slate-900 hover:text-slate-700 transition-colors text-left"
               >
-                <span>{topic.title}</span>
-                {isOpen ? <ChevronUp className="w-4 h-4 text-slate-500 shrink-0" /> : <ChevronDown className="w-4 h-4 text-slate-500 shrink-0" />}
+                <span className="font-serif sm:font-sans">{faq.question}</span>
+                <span className="shrink-0 p-1 text-slate-500">
+                  {isOpen ? <Minus className="w-4 h-4" /> : <Plus className="w-4 h-4" />}
+                </span>
               </button>
 
               {isOpen && (
-                <div className="px-4 pb-4 space-y-2 text-xs text-slate-600 border-t border-slate-200/60 pt-3">
-                  <p className="font-medium text-slate-800 bg-white p-3 rounded border border-slate-200/80">
-                    {topic.summary}
-                  </p>
-                  <p className="leading-relaxed pt-1">
-                    {topic.content}
-                  </p>
+                <div className="px-5 sm:px-6 pb-6 text-xs text-slate-600 leading-relaxed space-y-2 border-t border-slate-50/80 pt-3">
+                  <p>{faq.answer}</p>
                 </div>
               )}
             </div>
           );
         })}
       </div>
-    </div>
+
+      {/* Footer link per Image 1 */}
+      <div className="pt-2 text-xs text-slate-500 flex items-center justify-center gap-1.5">
+        <span>Can't find what you're looking for?</span>
+        <button
+          onClick={onAskVeroxa}
+          className="font-semibold text-slate-900 hover:underline flex items-center gap-1"
+        >
+          Ask Veroxa <ArrowRight className="w-3.5 h-3.5" />
+        </button>
+      </div>
+    </section>
   );
 };

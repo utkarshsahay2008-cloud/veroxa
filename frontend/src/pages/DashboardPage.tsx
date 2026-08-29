@@ -3,9 +3,11 @@ import { CompleteAnalysisResponse } from '../types';
 import { HouseholdSnapshot } from '../components/HouseholdSnapshot';
 import { TaxCheckupHero } from '../components/TaxCheckupHero';
 import { DontLeaveMoneyOnTable } from '../components/DontLeaveMoneyOnTable';
+import { RegimeComparison } from '../components/RegimeComparison';
 import { LifeEventCheck } from '../components/LifeEventCheck';
 import { DeductionCard } from '../components/DeductionCard';
 import { SchemeCard } from '../components/SchemeCard';
+import { WhyPipeline } from '../components/WhyPipeline';
 import { UnderstandYourTax } from '../components/UnderstandYourTax';
 import { ChatAssistant } from '../components/ChatAssistant';
 
@@ -16,10 +18,20 @@ interface DashboardPageProps {
 
 export const DashboardPage: React.FC<DashboardPageProps> = ({ analysis, onEditProfile }) => {
   const [selectedRuleIdForModal, setSelectedRuleIdForModal] = useState<string | null>(null);
+  const regimeRef = React.useRef<HTMLDivElement>(null);
   const deductionsRef = React.useRef<HTMLDivElement>(null);
+  const chatRef = React.useRef<HTMLDivElement>(null);
+
+  const scrollToRegime = () => {
+    regimeRef.current?.scrollIntoView({ behavior: 'smooth' });
+  };
 
   const scrollToDeductions = () => {
     deductionsRef.current?.scrollIntoView({ behavior: 'smooth' });
+  };
+
+  const scrollToAskVeroxa = () => {
+    chatRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
 
   const handleExploreRule = (ruleId: string) => {
@@ -31,29 +43,47 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ analysis, onEditPr
   const eligibleSchemes = analysis.schemes.filter(s => s.eligible);
 
   return (
-    <div className="max-w-5xl mx-auto space-y-10 py-8 px-4">
-      {/* 1. HOUSEHOLD SNAPSHOT */}
-      <section>
-        <HouseholdSnapshot
-          profile={analysis.profile}
-          onEdit={onEditProfile}
-        />
-      </section>
+    <div className="max-w-6xl mx-auto space-y-8 py-6 px-4 sm:px-6">
+      {/* Dashboard Page Title per User Directive (NO "Good morning Aarav") */}
+      <div className="flex flex-col sm:flex-row sm:items-baseline justify-between gap-2 border-b border-slate-200 pb-4">
+        <div>
+          <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">Your Tax Checkup</h1>
+          <p className="text-xs sm:text-sm text-slate-500 mt-0.5">Your household's tax checkup is ready for FY 2024-25 (AY 2025-26).</p>
+        </div>
 
-      {/* 2. THE MAIN RESULT (TAX CHECKUP HERO) */}
-      <section>
-        <TaxCheckupHero
-          analysis={analysis}
-          onSeeWhy={scrollToDeductions}
-        />
-      </section>
+        <span className="text-xs font-semibold text-slate-500 bg-slate-100 px-3 py-1 rounded-md border border-slate-200 shrink-0">
+          FY 2024-25 (AY 2025-26)
+        </span>
+      </div>
 
-      {/* 3. DON'T LEAVE MONEY ON THE TABLE */}
+      {/* Hero Dual Grid per Images 2 & 3 */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
+        <div className="lg:col-span-5">
+          <HouseholdSnapshot
+            profile={analysis.profile}
+            onEdit={onEditProfile}
+          />
+        </div>
+
+        <div className="lg:col-span-7">
+          <TaxCheckupHero
+            analysis={analysis}
+            onSeeWhy={scrollToRegime}
+          />
+        </div>
+      </div>
+
+      {/* Don't Leave Money on the Table per Images 2 & 3 */}
       <section>
         <DontLeaveMoneyOnTable deductions={analysis.deductions} />
       </section>
 
-      {/* 4. WHAT CHANGED THIS YEAR? (LIFE EVENT CHECK) */}
+      {/* Which Tax Regime Fits You? per Images 2 & 3 */}
+      <section ref={regimeRef}>
+        <RegimeComparison analysis={analysis.taxAnalysis} />
+      </section>
+
+      {/* What Changed in Your Life This Year? per Images 2 & 3 */}
       <section>
         <LifeEventCheck
           analysis={analysis}
@@ -61,13 +91,18 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ analysis, onEditPr
         />
       </section>
 
-      {/* 5. WHY THESE RECOMMENDATIONS APPEARED */}
+      {/* Why These Recommendations Appeared Pipeline per Images 2 & 3 */}
+      <section>
+        <WhyPipeline />
+      </section>
+
+      {/* Deduction Details */}
       <section ref={deductionsRef} className="space-y-6">
         <div className="flex items-center justify-between border-b border-slate-200 pb-3">
           <div>
-            <h2 className="text-xl font-bold text-slate-900">Why these recommendations appeared</h2>
-            <p className="text-xs text-slate-600 mt-0.5">
-              Compact evaluation of Chapter VI-A rules for your household
+            <h3 className="text-lg font-bold text-slate-900">All Evaluated Chapter VI-A Deductions</h3>
+            <p className="text-xs text-slate-500 mt-0.5">
+              Deterministic calculation breakdown for your reported investments and expenses
             </p>
           </div>
           <span className="text-xs font-semibold bg-slate-100 text-slate-700 px-3 py-1 rounded-md border border-slate-200">
@@ -82,11 +117,11 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ analysis, onEditPr
         </div>
 
         {/* Government Schemes Section */}
-        <div className="pt-6 space-y-4">
+        <div className="pt-4 space-y-4">
           <div className="flex items-center justify-between border-b border-slate-100 pb-3">
             <div>
-              <h3 className="text-lg font-bold text-slate-900">Potentially Relevant Government Schemes</h3>
-              <p className="text-xs text-slate-600 mt-0.5">
+              <h4 className="text-base font-bold text-slate-900">Potentially Relevant Government Schemes</h4>
+              <p className="text-xs text-slate-500 mt-0.5">
                 Evaluated against configured government scheme eligibility criteria
               </p>
             </div>
@@ -103,16 +138,16 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ analysis, onEditPr
         </div>
       </section>
 
-      {/* 6. UNDERSTAND YOUR TAX */}
-      <section>
-        <UnderstandYourTax />
+      {/* FAQ Section per Image 1 ("Clear answers.") */}
+      <section className="pt-6 border-t border-slate-200">
+        <UnderstandYourTax onAskVeroxa={scrollToAskVeroxa} />
       </section>
 
-      {/* 7. ASK VEROXA AI ASSISTANT */}
-      <section className="space-y-4 pt-4 border-t border-slate-200">
+      {/* Ask Veroxa AI Assistant */}
+      <section ref={chatRef} className="space-y-4 pt-6 border-t border-slate-200">
         <div className="space-y-1">
-          <h2 className="text-xl font-bold text-slate-900">Ask Veroxa</h2>
-          <p className="text-xs text-slate-600">
+          <h3 className="text-lg font-bold text-slate-900">Ask Veroxa</h3>
+          <p className="text-xs text-slate-500">
             Ask questions about your tax checkup, deductions, or regime selection. Answers are strictly derived from verified rule-engine results.
           </p>
         </div>
